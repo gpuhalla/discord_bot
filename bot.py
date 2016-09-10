@@ -36,14 +36,20 @@ async def catgirl():
 	catNumber = random.randint(1, 315)
 	catName = catNumber
 	if(catNumber == 315):
+<<<<<<< HEAD
 		await bot.say("BONUS ROUND")
+=======
+>>>>>>> parent of 737a2c3... #NICE
 		bonusCatNumber = random.randint(1, 22)
 		catName = 'BONUS' + bonusCatNumber
-	imageName = "CatgirlDB\\" + str(catName) + '.jpg'
+	imageName = catName + '.jpg'
 	await bot.upload(imageName)
 	return
 
 @bot.command()
 async def husbando():
 	return
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 737a2c3... #NICE
