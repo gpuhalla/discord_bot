@@ -33,12 +33,8 @@ async def quote():
 
 @bot.command()
 async def catgirl():
-	catNumber = random.randint(1, 315)
-	catName = catNumber
-	if(catNumber == 315):
-		bonusCatNumber = random.randint(1, 22)
-		catName = 'BONUS' + bonusCatNumber
-	imageName = catName + '.jpg'
+	catNumber = random.randint(1,315)
+	imageName = catNumber + '.jpg'
 	await bot.upload(imageName)
 	return
 
