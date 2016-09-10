@@ -36,7 +36,7 @@ async def catgirl():
 	catNumber = random.randint(1, 315)
 	catName = catNumber
 	if(catNumber == 315):
-		bot.say("BONUS ROUND")
+		await bot.say("BONUS ROUND")
 		bonusCatNumber = random.randint(1, 22)
 		catName = 'BONUS' + bonusCatNumber
 	imageName = "CatgirlDB\\" + str(catName) + '.jpg'
@@ -47,4 +47,3 @@ async def catgirl():
 async def husbando():
 	return
 
-bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrXkoQ.sFeJ16SMV5emugjzVprAwPmrh1o')
