@@ -13,6 +13,7 @@ async def on_ready():
 
 @bot.command()
 async def commend():
+	await bot.say('Added one point to !')
 	return
 
 @bot.command()
@@ -21,6 +22,7 @@ async def test():
 
 @bot.command()
 async def points():
+	await bot.say(' has a total of xxx points!')
 	return
 
 @bot.command()
@@ -36,7 +38,7 @@ async def catgirl():
 	catNumber = random.randint(1, 325)
 	catName = catNumber
 	if(catNumber >= 315):
-		await bot.say("BONUS ROUND")
+		await bot.say("__***BONUS ROUND***__")
 		bonusCatNumber = random.randint(1, 22)
 		catName = 'BONUS' + str(bonusCatNumber)
 	imageName = "CatgirlDB\\" + str(catName) + '.jpg'
