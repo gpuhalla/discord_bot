@@ -1,6 +1,10 @@
 import discord
 from discord.ext import commands
-import random
+import randomimport sqlite3
+
+#Exact filepath may be needed.
+conn = sqlite3.connect('bot_db.sqlite')
+c = conn.cursor()
 
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
 
@@ -31,22 +35,59 @@ async def roulette(amount : int):
 
 @bot.command()
 async def quote():
+	#Checks if table exists first. Prints a random result if it does.
+	if !checkTableExists(conn, quotes):
+		await bot.say("Quote table does not exist");
+	else:
+		cursor = c.execute('''SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1''')
+		#should pick out the second  and third fields of what the command returns
+		attributor = c.fetchone()[1]
+		quote = c.fetchone()[2]
+		await bot.say(quote)
+		await bot.say("  -" + attributor)
 	return
-
+	
+@bot.command()
+async def addquote(quote : attributor):
+	#Checks if table exists before adding quote. Creates table if it does not.
+	if !checkTableExists(conn, quotes):
+	{
+		conn.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
+	}
+	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?)", (quote, attributor))
+	
 @bot.command()
 async def catgirl():
 	catNumber = random.randint(1, 325)
 	catName = catNumber
 	if(catNumber >= 315):
-		await bot.say("__***BONUS ROUND***__")
+		await bot.say("BONUS ROUND")
 		bonusCatNumber = random.randint(1, 22)
 		catName = 'BONUS' + str(bonusCatNumber)
 	imageName = "CatgirlDB\\" + str(catName) + '.jpg'
 	await bot.upload(imageName)
 	return
-
+	
+@bot.command()
+async def shrek():
+	shrekNumber = random.randint(1, 35)
+	shrekName = shrekNumber
+	imageName = "shrek\\" + str(shrekName) + '.png'
+	await bot.upload(imageName)
+	return
+	
 @bot.command()
 async def husbando():
 	return
 
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrYQfA.gA246SiyVTS_SICctEo-7JJKwRU')
+
+
+def checkTableExists(tableName):
+{
+	#Checks if a table exists
+	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", tableName)
+	#Returns the query result. 0 for does not exist. 1 for exists.
+	return c.fetchone()[0]
+	
+}
