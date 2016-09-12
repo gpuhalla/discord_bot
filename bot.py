@@ -19,7 +19,7 @@ async def on_ready():
 
 def checkTableExists(tableName):
 	#Checks if a table exists
-	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", tableName)
+	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", (tableName, ))
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
