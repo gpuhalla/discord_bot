@@ -59,7 +59,7 @@ async def quote():
 @bot.command()
 async def addquote(quote : str, attributor: str):
 	#Checks if table exists before adding quote. Creates table if it does not.
-	if not checkTableExists(quotes):
+	if not checkTableExists("quotes"):
 		c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
 	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?)", (quote, attributor))
 	
@@ -77,7 +77,7 @@ async def catgirl():
 	
 @bot.command()
 async def shrek():
-	shrekNumber = random.randint(1, 34)
+	shrekNumber = random.randint(1, 35)
 	shrekName = shrekNumber
 	imageName = "shrek\\" + str(shrekName) + '.png'
 	await bot.upload(imageName)
