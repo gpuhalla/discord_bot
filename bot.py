@@ -50,11 +50,9 @@ async def quote():
 	else:
 		cursor = c.execute('''SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1''')
 		#should pick out the second  and third fields of what the command returns
-		id = c.fetchone()[0]
-		await bot.say(id)
-		attributor = c.fetchone()[1]
-		await bot.say(attributor)
-		quote = c.fetchone()[2]
+		returned = c.fetchall()
+		attributor = returned[1]
+		quote = returned[2]
 		await bot.say(quote)
 		await bot.say("  -" + attributor)
 	return
