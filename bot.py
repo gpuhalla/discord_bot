@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
-import randomimport sqlite3
+import random
+import sqlite3
 
 #Exact filepath may be needed.
 conn = sqlite3.connect('bot_db.sqlite')
