@@ -49,7 +49,7 @@ async def quote():
 	return
 	
 @bot.command()
-async def addquote(quote : attributor):
+async def addquote(quote : str, attributor: str):
 	#Checks if table exists before adding quote. Creates table if it does not.
 	if not checkTableExists(quotes):
 		c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
