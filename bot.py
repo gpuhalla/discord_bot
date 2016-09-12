@@ -16,6 +16,14 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
+
+def checkTableExists(tableName):
+	#Checks if a table exists
+	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", tableName)
+	#Returns the query result. 0 for does not exist. 1 for exists.
+	return c.fetchone()[0]
+	
+	
 @bot.command()
 async def commend():
 	await bot.say('Added one point to !')
@@ -80,9 +88,3 @@ async def husbando():
 	return
 
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrYQfA.gA246SiyVTS_SICctEo-7JJKwRU')
-
-def checkTableExists(tableName):
-	#Checks if a table exists
-	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", tableName)
-	#Returns the query result. 0 for does not exist. 1 for exists.
-	return c.fetchone()[0]
