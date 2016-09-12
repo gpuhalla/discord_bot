@@ -70,7 +70,7 @@ async def catgirl():
 	
 @bot.command()
 async def shrek():
-	shrekNumber = random.randint(1, 35)
+	shrekNumber = random.randint(1, 34)
 	shrekName = shrekNumber
 	imageName = "shrek\\" + str(shrekName) + '.png'
 	await bot.upload(imageName)
