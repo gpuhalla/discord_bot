@@ -50,8 +50,8 @@ async def quote():
 	else:
 		cursor = c.execute('''SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1''')
 		#should pick out the second  and third fields of what the command returns
-		attributor = c.fetchone()[0]
-		quote = c.fetchone()[1]
+		attributor = c.fetchone()[1]
+		quote = c.fetchone()[2]
 		await bot.say(quote)
 		await bot.say("  -" + attributor)
 	return
@@ -61,7 +61,7 @@ async def addquote(quote : str, attributor: str):
 	#Checks if table exists before adding quote. Creates table if it does not.
 	if not checkTableExists("quotes"):
 		c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
-	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?)", (quote, attributor))
+	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?);", (quote, attributor))
 	
 @bot.command()
 async def catgirl():
