@@ -52,9 +52,7 @@ async def quote():
 async def addquote(quote : attributor):
 	#Checks if table exists before adding quote. Creates table if it does not.
 	if not checkTableExists(quotes):
-	{
 		c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
-	}
 	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?)", (quote, attributor))
 	
 @bot.command()
@@ -84,9 +82,7 @@ async def husbando():
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrYQfA.gA246SiyVTS_SICctEo-7JJKwRU')
 
 def checkTableExists(tableName):
-{
 	#Checks if a table exists
 	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", tableName)
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
-}
