@@ -37,7 +37,7 @@ async def roulette(amount : int):
 @bot.command()
 async def quote():
 	#Checks if table exists first. Prints a random result if it does.
-	if !checkTableExists(conn, quotes):
+	if not checkTableExists(conn, quotes):
 		await bot.say("Quote table does not exist");
 	else:
 		cursor = c.execute('''SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1''')
