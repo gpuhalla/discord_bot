@@ -45,7 +45,7 @@ async def roulette(amount : int):
 @bot.command()
 async def quote():
 	#Checks if table exists first. Prints a random result if it does.
-	if not checkTableExists(quotes):
+	if not checkTableExists("quotes"):
 		await bot.say("Quote table does not exist");
 	else:
 		cursor = c.execute('''SELECT * FROM quotes ORDER BY RANDOM() LIMIT 1''')
@@ -77,7 +77,7 @@ async def catgirl():
 	
 @bot.command()
 async def shrek():
-	shrekNumber = random.randint(1, 35)
+	shrekNumber = random.randint(1, 34)
 	shrekName = shrekNumber
 	imageName = "shrek\\" + str(shrekName) + '.png'
 	await bot.upload(imageName)
