@@ -53,8 +53,8 @@ async def quote():
 		returned = c.fetchall()
 		await bot.say(returned)
 		await bot.say(type(returned))
-		attributor = returned[1]
-		quote = returned[2]
+		attributor = returned.pop([1])
+		quote = returned.pop([1])
 		await bot.say(quote)
 		await bot.say("  -" + attributor)
 	return
