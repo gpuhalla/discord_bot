@@ -72,6 +72,7 @@ async def deductPoints(userID, numPoints):
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints - ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
 	
+	
 @bot.command()
 async def commend():
 	await bot.say('Added one point to !')
@@ -92,6 +93,32 @@ async def points(ctx):
 		await bot.say("{0} has a total of 0 points!".format(str(name)))
 	else:
 		await bot.say("{0} has a total of {1} points!".format(str(name), int(points[0])))
+	
+
+@bot.command(pass_context=True)
+async def roulette(ctx, all : str):
+	if all.strip().lower() is not "all":
+		await bot.say("I don't know what that means, onii-chan!")
+	else:
+		userID = ctx.message.author.id
+		name = ctx.message.author.name
+		c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
+		points = c.fetchone()
+		c.fetchall()
+		points = int(points[0])
+		if points is None or points <= 0:
+			await bot.say("You have no points to wager!")
+		else:
+			choice = bool(random.getrandbits(1))
+			if choice:
+				await addPoints(userID, points)
+				await bot.say(":100: :ok_hand: :100: WINNER! :100: :ok_hand: :100:")
+				await bot.say("{0} now has {1} points!".format(name, points + points))
+			else:
+				await deductPoints(userID, points)
+				await bot.say(":sob: :crying_cat_face: :sob: LOSER! :sob: :crying_cat_face: :sob:")
+				await bot.say("{0} now has {1} points...".format(name, points - points))
+	return
 	
 
 @bot.command(pass_context=True)
