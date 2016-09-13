@@ -14,6 +14,7 @@ c = conn.cursor()
 points_cursor = conn.cursor()
 
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
+masterDBList = []
 
 @bot.event
 async def on_ready():
