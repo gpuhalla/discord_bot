@@ -71,6 +71,8 @@ async def test():
 async def points(ctx):
 	userID = ctx.message.author.id
 	name = ctx.message.author.nick
+	if name is None or name == "None":
+		name = ctx.message.author.name
 	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
 	points = c.fetchone()
 	c.fetchall()
@@ -84,6 +86,8 @@ async def points(ctx):
 async def roulette(ctx, amount : int):
 	userID = ctx.message.author.id
 	name = ctx.message.author.nick
+	if name is None or name == "None":
+		name = ctx.message.author.name
 	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
 	points = c.fetchone()
 	c.fetchall()
@@ -91,7 +95,7 @@ async def roulette(ctx, amount : int):
 	if points is None:
 		await bot.say("You have no points to wager!")
 	elif amount > points:
-		await bot.say("That wager is too high! You can only wager {0} points! :money_mouth:")
+		await bot.say("That wager is too high! You can only wager {0} points! :money_mouth:".format(points))
 	else:
 		choice = bool(random.getrandbits(1))
 		if choice:
