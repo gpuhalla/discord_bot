@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import random
 import sqlite3
-import time
+import asyncio
 
 #Exact filepath may be needed.
 conn = sqlite3.connect('bot_db.sqlite')
@@ -20,7 +20,6 @@ async def on_ready():
 	print(bot.user.name)
 	print(bot.user.id)
 	print('------')
-	bot.loop.create_task(pointsBackgroundTask())
 
 
 def checkTableExists(tableName):
@@ -31,20 +30,22 @@ def checkTableExists(tableName):
 	
 
 async def pointsBackgroundTask():
+	await bot.wait_until_ready()
 	if not checkTableExists("Points"):
 		points_cursor.execute("""CREATE TABLE "Points" ("UserID" VARCHAR(20) PRIMARY KEY NOT NULL UNIQUE, "numPoints" INTEGER NOT NULL DEFAULT 0)""")
-	while True:
+	while not bot.is_closed:
 		for server in bot.servers:
 			for member in server.members:
 				if member.status == discord.enums.Status.online:
 					await addPoints(member.id, 1)
-		time.sleep(30)
+		await asyncio.sleep(30)
 	
 async def addPoints(userID, numPoints):
 	points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
-	if points_cursor.fetchall() is None:
+	if points_cursor.fetchone() is None:
 		points_cursor.execute("INSERT INTO Points (UserID, numPoints) VALUES (?, 0)", (str(userID), ))
 		conn.commit()
+	points_cursor.fetchall()
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints + ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
 	
@@ -59,8 +60,12 @@ async def test():
 
 @bot.command(pass_context=True)
 async def points(ctx):
+	print("points called")
 	userID = ctx.message.author.id
 	name = ctx.message.author.name
+	print(userID)
+	print(name)
+	print(ctx)
 	points_cursor.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
 	points = points_cursor.fetchone()
 	points_cursor.fetchall()
@@ -121,4 +126,5 @@ async def shrek():
 async def husbando():
 	return
 
+bot.loop.create_task(pointsBackgroundTask())
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrjL4A.TwmYMflSnCkmz_MSueuSSx2Y6OE')
