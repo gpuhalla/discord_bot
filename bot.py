@@ -81,7 +81,7 @@ async def points(ctx):
 	
 
 @bot.command(pass_context=True)
-async def roulette(amount : int):
+async def roulette(ctx, amount : int):
 	userID = ctx.message.author.id
 	name = ctx.message.author.nick
 	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
