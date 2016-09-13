@@ -3,6 +3,7 @@ from discord.ext import commands
 import random
 import sqlite3
 import asyncio
+import os
 
 #Exact filepath may be needed.
 conn = sqlite3.connect('bot_db.sqlite')
@@ -28,6 +29,18 @@ def checkTableExists(tableName):
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
+	def uploadRandomPicture(folderName):
+	if not folderName in masterDBList:
+		try:
+			masterDBList.append(os.listdir(folderName))
+		except Exception:
+			await bot.say("Error in directory listing. Check that folder exists.")
+			return	
+	index = masterDBList.index(folderName)
+	length = len(masterDBList.index(folderName))
+	rngNumber = random.randint(0, length - 1)
+	await bot.upload(masterDBList[index][rngNumber])
+	return
 
 async def pointsBackgroundTask():
 	await bot.wait_until_ready()
@@ -153,5 +166,10 @@ async def shrek():
 async def husbando():
 	return
 
+@bot.command()
+async def pic(folder : str):
+	uploadRandomPicture(folder)
+	return
+	
 bot.loop.create_task(pointsBackgroundTask())
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrjL4A.TwmYMflSnCkmz_MSueuSSx2Y6OE')
