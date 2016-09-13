@@ -33,7 +33,7 @@ def uploadRandomPicture(folderName):
 	if not folderName in masterDBList:
 		try:
 			masterDBList.append(os.listdir(folderName))
-		except Exception as e:
+		except:
 			await bot.say("Error in directory listing. Check that folder exists.")
 			return	
 	index = masterDBList.index(folderName)
