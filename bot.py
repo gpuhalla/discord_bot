@@ -33,7 +33,7 @@ def checkTableExists(tableName):
 def uploadRandomPicture(folderName):
 	if not folderName in masterDBList:
 		try:
-			masterDBList.append(os.listdir(folderName))
+			#masterDBList.append(os.listdir(folderName))
 		except:
 			await bot.say("Error in directory listing. Check that folder exists.")
 			return	
