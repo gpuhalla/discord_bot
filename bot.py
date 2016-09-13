@@ -38,7 +38,7 @@ async def pointsBackgroundTask():
 			for member in server.members:
 				if member.status == discord.enums.Status.online:
 					await addPoints(member.id, 1)
-		await asyncio.sleep(30)
+		await asyncio.sleep(60)
 	
 async def addPoints(userID, numPoints):
 	points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
@@ -47,6 +47,15 @@ async def addPoints(userID, numPoints):
 		conn.commit()
 	points_cursor.fetchall()
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints + ? WHERE UserID = ?", (int(numPoints), str(userID), ))
+	conn.commit()
+	
+async def deductPoints(userID, numPoints):
+	points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
+	if points_cursor.fetchone() is None:
+		points_cursor.execute("INSERT INTO Points (UserID, numPoints) VALUES (?, 0)", (str(userID), ))
+		conn.commit()
+	points_cursor.fetchall()
+	points_cursor.execute("UPDATE Points SET numPoints = numPoints - ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
 	
 @bot.command()
@@ -60,23 +69,39 @@ async def test():
 
 @bot.command(pass_context=True)
 async def points(ctx):
-	print("points called")
 	userID = ctx.message.author.id
-	name = ctx.message.author.name
-	print(userID)
-	print(name)
-	print(ctx)
-	points_cursor.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
-	points = points_cursor.fetchone()
-	points_cursor.fetchall()
+	name = ctx.message.author.nick
+	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
+	points = c.fetchone()
+	c.fetchall()
 	if points is None:
 		await bot.say("{0} has a total of 0 points!".format(str(name)))
 	else:
 		await bot.say("{0} has a total of {1} points!".format(str(name), int(points[0])))
 	
 
-@bot.command()
+@bot.command(pass_context=True)
 async def roulette(amount : int):
+	userID = ctx.message.author.id
+	name = ctx.message.author.nick
+	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
+	points = c.fetchone()
+	c.fetchall()
+	points = int(points[0])
+	if points is None:
+		await bot.say("You have no points to wager!")
+	elif amount > points:
+		await bot.say("That wager is too high! You can only wager {0} points! :money_mouth:")
+	else:
+		choice = bool(random.getrandbits(1))
+		if choice:
+			await addPoints(userID, amount)
+			await bot.say(":100: :ok_hand: :100: WINNER! :100: :ok_hand: :100:")
+			await bot.say("{0} now has {1} points!".format(name, points + amount))
+		else:
+			await deductPoints(userID, amount)
+			await bot.say(":sob: :sob: LOSER! :sob: :sob:")
+			await bot.say("{0} now has {1} points...".format(name, points - amount))
 	return
 
 @bot.command()
