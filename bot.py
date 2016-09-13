@@ -70,9 +70,7 @@ async def test():
 @bot.command(pass_context=True)
 async def points(ctx):
 	userID = ctx.message.author.id
-	name = ctx.message.author.nick
-	if name is None or name == "None":
-		name = ctx.message.author.name
+	name = ctx.message.author.name
 	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
 	points = c.fetchone()
 	c.fetchall()
@@ -85,9 +83,7 @@ async def points(ctx):
 @bot.command(pass_context=True)
 async def roulette(ctx, amount : int):
 	userID = ctx.message.author.id
-	name = ctx.message.author.nick
-	if name is None or name == "None":
-		name = ctx.message.author.name
+	name = ctx.message.author.name
 	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
 	points = c.fetchone()
 	c.fetchall()
