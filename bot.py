@@ -15,6 +15,7 @@ points_cursor = conn.cursor()
 
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
 masterDBList = {}
+bonusDBList = {}
 
 @bot.event
 async def on_ready():
@@ -30,13 +31,38 @@ def checkTableExists(tableName):
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
-async def uploadRandomPicture(folderName):
+async def uploadRandomPicture(inputFolder):
+	folderName = inputFolder
+	
+	#adds folder to dictionary if it is not already there.
+	#key: folder name, value: list of items in folder
 	if not folderName in masterDBList:
 		try:
 			masterDBList[folderName] = os.listdir(folderName)
 		except:
 			await bot.say("Error in directory listing. Check that folder exists.")
 			return
+			
+	#bonus operations
+	rngNumber = random.randint(1, 500)
+	bonusfolder = folderName + "\\" + folderName + "bonus"
+	#if rngNumber == 1:
+	if true:
+		if not bonusfolder in bonusDBList:
+			try:
+				bonusDBList[bonusfolder] = os.listdir(bonusfolder)
+			except:
+				await bot.say("Error in directory listing. Check that bonusfolder exists.")
+				return
+		length = len(bonusDBList.get(bonusfolder))
+		rngNumber = random.randint(0, length - 1)
+		fileName = bonusDBList.get(bonusfolder)[rngNumber]
+		while fileName == "Thumbs.db":
+			rngNumber = random.randint(0, length - 1)
+			fileName = bonusDBList.get(bonusfolder)[rngNumber]
+		await bot.upload(bonusfolder + "\\" + bonusDBList.get(bonusDBList)[rngNumber])
+		return
+		
 	length = len(masterDBList.get(folderName))
 	rngNumber = random.randint(0, length - 1)
 	fileName = masterDBList.get(folderName)[rngNumber]
