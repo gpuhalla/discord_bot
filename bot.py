@@ -41,7 +41,7 @@ async def uploadRandomPicture(folderName):
 	length = len(masterDBList.get(folderName))
 	rngNumber = random.randint(0, length - 1)
 	fileName = masterDBList.get(folderName)[rngNumber]
-	while fileName = "Thumbs.db":
+	while fileName == "Thumbs.db":
 		rngNumber = random.randint(0, length - 1)
 		fileName = masterDBList.get(folderName)[rngNumber]
 	await bot.upload(folderName + "\\" + masterDBList.get(folderName)[rngNumber])
