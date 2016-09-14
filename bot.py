@@ -50,7 +50,7 @@ async def pointsBackgroundTask():
 	while not bot.is_closed:
 		for server in bot.servers:
 			for member in server.members:
-				if member.status == discord.enums.Status.online:
+				if member.status == discord.enums.Status.online and member.id is not bot.user.id:
 					await addPoints(member.id, 1)
 		await asyncio.sleep(60)
 	
@@ -95,41 +95,34 @@ async def points(ctx):
 		await bot.say("{0} has a total of {1} points!".format(str(name), int(points[0])))
 	
 
-@bot.command(pass_context=True)
-async def roulette(ctx, all : str):
-	if all.strip().lower() is not "all":
-		await bot.say("I don't know what that means, onii-chan!")
-	else:
-		userID = ctx.message.author.id
-		name = ctx.message.author.name
-		c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
-		points = c.fetchone()
-		c.fetchall()
-		points = int(points[0])
-		if points is None or points <= 0:
-			await bot.say("You have no points to wager!")
-		else:
-			choice = bool(random.getrandbits(1))
-			if choice:
-				await addPoints(userID, points)
-				await bot.say(":100: :ok_hand: :100: WINNER! :100: :ok_hand: :100:")
-				await bot.say("{0} now has {1} points!".format(name, points + points))
-			else:
-				await deductPoints(userID, points)
-				await bot.say(":sob: :crying_cat_face: :sob: LOSER! :sob: :crying_cat_face: :sob:")
-				await bot.say("{0} now has {1} points...".format(name, points - points))
-	return
+@bot.command()
+async def leaderboard():
+	c.execute("SELECT (UserID, numPoints) FROM Points ORDER BY numPoints LIMIT 5")
+	leaders = c.fetchall()
+	await bot.say("__***LEADERBOARD***__")
+	position = 1
+	for leader in leaders:
+		userID = leader[0]
+		points = int(leader[1])
+		await bot.say("{0}.) <@{1}> with {2} points".format(position, userID, points))
+		position += 1
 	
-
+		
 @bot.command(pass_context=True)
-async def roulette(ctx, amount : int):
+async def roulette(ctx, amount : str):
 	userID = ctx.message.author.id
 	name = ctx.message.author.name
 	c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
 	points = c.fetchone()
 	c.fetchall()
+
 	points = int(points[0])
-	if points is None:
+	if amount.strip().lower() == "all":
+		amount = points
+	else:
+		amount = int(float(amount))
+		
+	if points is None or points == 0:
 		await bot.say("You have no points to wager!")
 	elif amount <= 0:
 		await bot.say("You can't wager nothing, baka!")
@@ -143,7 +136,7 @@ async def roulette(ctx, amount : int):
 			await bot.say("{0} now has {1} points!".format(name, points + amount))
 		else:
 			await deductPoints(userID, amount)
-			await bot.say(":sob: :sob: LOSER! :sob: :sob:")
+			await bot.say(":sob: :crying_cat_face: :sob: LOSER! :sob: :crying_cat_face: :sob:")
 			await bot.say("{0} now has {1} points...".format(name, points - amount))
 	return
 
