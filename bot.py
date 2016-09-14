@@ -30,7 +30,7 @@ def checkTableExists(tableName):
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
-def uploadRandomPicture(folderName):
+async def uploadRandomPicture(folderName):
 	if not folderName in masterDBList:
 		try:
 			masterDBList.append(os.listdir(folderName))
