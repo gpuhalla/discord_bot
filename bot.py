@@ -44,7 +44,7 @@ async def uploadRandomPicture(inputFolder):
 			return
 			
 	#bonus operations
-	rngNumber = 1 #random.randint(1, 500)
+	rngNumber = random.randint(1, 500)
 	bonusfolder = folderName + "\\" + folderName + "bonus"
 	if rngNumber == 1:
 		if not bonusfolder in bonusDBList:
@@ -53,6 +53,7 @@ async def uploadRandomPicture(inputFolder):
 			except:
 				await bot.say("Error in directory listing. Check that bonusfolder exists.")
 				return
+		await bot.say("BONUS ROUND")
 		length = len(bonusDBList.get(bonusfolder))
 		rngNumber = random.randint(0, length - 1)
 		fileName = bonusDBList.get(bonusfolder)[rngNumber]
@@ -61,7 +62,8 @@ async def uploadRandomPicture(inputFolder):
 			fileName = bonusDBList.get(bonusfolder)[rngNumber]
 		await bot.upload(bonusfolder + "\\" + bonusDBList.get(bonusfolder)[rngNumber])
 		return
-		
+	
+	#normal operations
 	length = len(masterDBList.get(folderName))
 	rngNumber = random.randint(0, length - 1)
 	fileName = masterDBList.get(folderName)[rngNumber]
