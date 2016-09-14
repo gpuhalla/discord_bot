@@ -33,7 +33,6 @@ def checkTableExists(tableName):
 async def uploadRandomPicture(folderName):
 	if not folderName in masterDBList:
 		try:
-			#masterDBList.append(folderName)
 			masterDBList[folderName] = os.listdir(folderName)
 		except:
 			await bot.say("Error in directory listing. Check that folder exists.")
@@ -182,14 +181,12 @@ async def catgirl():
 	
 @bot.command()
 async def shrek():
-	shrekNumber = random.randint(1, 34)
-	shrekName = shrekNumber
-	imageName = "shrek\\" + str(shrekName) + '.png'
-	await bot.upload(imageName)
+	await uploadRandomPicture("shrek")
 	return
 	
 @bot.command()
 async def husbando():
+	await uploadRandomPicture("husbandodb")
 	return
 
 @bot.command()
