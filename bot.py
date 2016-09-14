@@ -190,7 +190,7 @@ async def husbando():
 
 @bot.command()
 async def pic(folder : str):
-	uploadRandomPicture(folder)
+	await uploadRandomPicture(folder)
 	return
 	
 bot.loop.create_task(pointsBackgroundTask())
