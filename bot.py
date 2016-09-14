@@ -99,7 +99,7 @@ async def points(ctx):
 async def leaderboard():
 	c.execute("SELECT UserID, numPoints FROM Points ORDER BY numPoints DESC LIMIT 5")
 	leaders = c.fetchall()
-	boardstring "__***LEADERBOARD***__\n"
+	boardstring = "__***LEADERBOARD***__\n"
 	position = 1
 	for leader in leaders:
 		userID = leader[0]
