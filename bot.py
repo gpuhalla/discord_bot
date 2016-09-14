@@ -31,7 +31,7 @@ def checkTableExists(tableName):
 	return c.fetchone()[0]
 	
 async def uploadRandomPicture(folderName):
-	if not masterDBList.has_key(folderName):
+	if not folderName in masterDBList:
 		try:
 			#masterDBList.append(folderName)
 			masterDBList[folderName] = os.listdir(folderName)
