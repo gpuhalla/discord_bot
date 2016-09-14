@@ -37,6 +37,7 @@ async def uploadRandomPicture(folderName):
 		except:
 			await bot.say("Error in directory listing. Check that folder exists.")
 			return
+	await bot.say(masterDBList)
 	index = masterDBList.index(folderName)
 	length = len(masterDBList.index(folderName))
 	rngNumber = random.randint(0, length - 1)
