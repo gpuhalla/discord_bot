@@ -30,18 +30,18 @@ def checkTableExists(tableName):
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
-# def uploadRandomPicture(folderName):
-	# if not folderName in masterDBList:
-		# try:
-			# masterDBList.append(os.listdir(folderName))
-		# except:
-			# await bot.say("Error in directory listing. Check that folder exists.")
-			# return	
-	# index = masterDBList.index(folderName)
-	# length = len(masterDBList.index(folderName))
-	# rngNumber = random.randint(0, length - 1)
-	# await bot.upload(masterDBList[index][rngNumber])
-	# return
+def uploadRandomPicture(folderName):
+	if not folderName in masterDBList:
+		try:
+			masterDBList.append(os.listdir(folderName))
+		except:
+			await bot.say("Error in directory listing. Check that folder exists.")
+			return
+	index = masterDBList.index(folderName)
+	length = len(masterDBList.index(folderName))
+	rngNumber = random.randint(0, length - 1)
+	await bot.upload(masterDBList[index][rngNumber])
+	return
 
 async def pointsBackgroundTask():
 	await bot.wait_until_ready()
