@@ -14,7 +14,7 @@ c = conn.cursor()
 points_cursor = conn.cursor()
 
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
-masterDBList = []
+masterDBList = {}
 
 @bot.event
 async def on_ready():
@@ -31,17 +31,20 @@ def checkTableExists(tableName):
 	return c.fetchone()[0]
 	
 async def uploadRandomPicture(folderName):
-	if not folderName in masterDBList:
+	if not masterDBList.has_key(folderName):
 		try:
-			masterDBList.append(os.listdir(folderName))
+			#masterDBList.append(folderName)
+			masterDBList[folderName] = os.listdir(folderName)
 		except:
 			await bot.say("Error in directory listing. Check that folder exists.")
 			return
-	await bot.say(masterDBList)
-	index = masterDBList.index(folderName)
-	length = len(masterDBList.index(folderName))
+	length = len(masterDBList.get(folderName))
 	rngNumber = random.randint(0, length - 1)
-	await bot.upload(masterDBList[index][rngNumber])
+	fileName = masterDBList.get(folderName)[rngNumber]
+	while fileName = "Thumbs.db":
+		rngNumber = random.randint(0, length - 1)
+		fileName = masterDBList.get(folderName)[rngNumber]
+	await bot.upload(folderName + "\\" + masterDBList.get(folderName)[rngNumber])
 	return
 
 async def pointsBackgroundTask():
