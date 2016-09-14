@@ -97,7 +97,7 @@ async def points(ctx):
 
 @bot.command()
 async def leaderboard():
-	c.execute("SELECT (UserID, numPoints) FROM Points ORDER BY numPoints LIMIT 5")
+	c.execute("SELECT UserID, numPoints FROM Points ORDER BY numPoints LIMIT 5")
 	leaders = c.fetchall()
 	await bot.say("__***LEADERBOARD***__")
 	position = 1
