@@ -124,7 +124,7 @@ async def roulette(ctx, amount : str):
 		amount = int(float(amount))
 		
 	if points is None or points == 0:
-		await bot.say("You have no points to wager!")
+		await bot.say("You have no points to wager, baka!")
 	elif amount <= 0:
 		await bot.say("You can't wager nothing, baka!")
 	elif amount > points:
