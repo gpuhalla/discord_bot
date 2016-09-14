@@ -97,16 +97,17 @@ async def points(ctx):
 
 @bot.command()
 async def leaderboard():
-	c.execute("SELECT UserID, numPoints FROM Points ORDER BY numPoints LIMIT 5")
+	c.execute("SELECT UserID, numPoints FROM Points ORDER BY numPoints DESC LIMIT 5")
 	leaders = c.fetchall()
-	await bot.say("__***LEADERBOARD***__")
+	boardstring "__***LEADERBOARD***__\n"
 	position = 1
 	for leader in leaders:
 		userID = leader[0]
 		points = int(leader[1])
-		await bot.say("{0}.) <@{1}> with {2} points".format(position, userID, points))
+		boardstring += "{0}.) <@{1}> with {2} points\n".format(position, userID, points)
 		position += 1
 	
+	await bot.say(boardstring)
 		
 @bot.command(pass_context=True)
 async def roulette(ctx, amount : str):
