@@ -44,10 +44,9 @@ async def uploadRandomPicture(inputFolder):
 			return
 			
 	#bonus operations
-	rngNumber = random.randint(1, 500)
+	rngNumber = 1 #random.randint(1, 500)
 	bonusfolder = folderName + "\\" + folderName + "bonus"
-	#if rngNumber == 1:
-	if true:
+	if rngNumber == 1:
 		if not bonusfolder in bonusDBList:
 			try:
 				bonusDBList[bonusfolder] = os.listdir(bonusfolder)
