@@ -225,10 +225,10 @@ async def pic(folder : str):
 async def fuckmarrykill():
 	await bot.say("Bachelor(ette) #1")
 	await uploadRandomPicture("fmk")
-	await asyncio.sleep(1)
+	await asyncio.sleep(2)
 	await bot.say("Bachelor(ette) #2")
 	await uploadRandomPicture("fmk")
-	await asyncio.sleep(1)
+	await asyncio.sleep(2)
 	await bot.say("Bachelor(ette) #3")
 	await uploadRandomPicture("fmk")
 	return
