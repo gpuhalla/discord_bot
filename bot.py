@@ -220,6 +220,16 @@ async def husbando():
 async def pic(folder : str):
 	await uploadRandomPicture(folder)
 	return
+
+@bot.command()
+async def fuckmarrykill():
+	await bot.say("Bachelor(ette) #1")
+	await uploadRandomPicture("fmk")
+	await bot.say("Bachelor(ette) #2")
+	await uploadRandomPicture("fmk")
+	await bot.say("Bachelor(ette) #3")
+	await uploadRandomPicture("fmk")
+	return
 	
 bot.loop.create_task(pointsBackgroundTask())
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrjL4A.TwmYMflSnCkmz_MSueuSSx2Y6OE')
