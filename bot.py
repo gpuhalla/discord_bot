@@ -85,7 +85,7 @@ async def pointsBackgroundTask():
 	while not bot.is_closed:
 		for server in bot.servers:
 			for member in server.members:
-				if member.status == discord.enums.Status.online and member.id is not bot.user.id:
+				if member.status == discord.enums.Status.online and member.id != bot.user.id:
 					await addPoints(member.id, 1)
 		await asyncio.sleep(60)
 	
@@ -107,21 +107,21 @@ async def deductPoints(userID, numPoints):
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints - ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
 	
-@bot.command()
-async def printusers():
-	await bot.say("Members")
-	for server in bot.servers:
-		for member in server.members:
-			await bot.say("***Member***")
-			await bot.say(member)
-			await bot.say("***Member ID***")
-			await bot.say(member.id)
-	await bot.say("***bot.user.id***")
-	await bot.say(bot.user.id)
-	await bot.say("***bot.user***")
-	await bot.say(bot.user)
-	await bot.say("***bot***")
-	await bot.say(bot)
+# @bot.command()
+# async def printusers():
+	# await bot.say("Members")
+	# for server in bot.servers:
+		# for member in server.members:
+			# await bot.say("***Member***")
+			# await bot.say(member)
+			# await bot.say("***Member ID***")
+			# await bot.say(member.id)
+	# await bot.say("***bot.user.id***")
+	# await bot.say(bot.user.id)
+	# await bot.say("***bot.user***")
+	# await bot.say(bot.user)
+	# await bot.say("***bot***")
+	# await bot.say(bot)
 	
 @bot.command()
 async def commend():
