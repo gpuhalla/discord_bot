@@ -187,8 +187,7 @@ async def quote():
 		returned = c.fetchall().pop()
 		attributor = returned[1]
 		quote = returned[2]
-		await bot.say(quote)
-		await bot.say("  -" + attributor)
+		await bot.say(quote + "\n  -" + attributor)
 	return
 	
 @bot.command()
