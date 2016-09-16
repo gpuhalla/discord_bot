@@ -229,6 +229,11 @@ async def husbando():
 	return
 
 @bot.command()
+async def pic(folder : str):
+	await uploadRandomPicture(folder, 0)
+	return
+
+@bot.command()
 async def fuckmarrykill():
 	await bot.say("Bachelor(ette) #1")
 	await uploadRandomPicture("fmk", 0)
