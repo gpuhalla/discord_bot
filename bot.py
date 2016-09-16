@@ -5,6 +5,11 @@ import sqlite3
 import asyncio
 import os
 
+#reddit api
+import praw
+user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
+r = praw.Reddit(user_agent=user_agent)
+
 #Exact filepath may be needed.
 conn = sqlite3.connect('bot_db.sqlite')
 c = conn.cursor()
@@ -228,6 +233,23 @@ async def husbando():
 	await uploadRandomPicture("husbandodb", 100)
 	return
 
+@bot.command()
+async def cute():
+	#returns an array of the top # hot posts from a subreddit
+	cutepics = r.get_subreddit('awwnime').get_hot(limit=25)
+	#set up url array
+	i = 0
+	cuteurl = [0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0]
+	#create url array
+	for item in cutepics:
+		cuteurl[i] = (item.url)
+		i+=1
+	#random number in array
+	cuterngNumber = random.randint(0, 24)
+	#picks a random url from the array
+	await bot.say(cuteurl[cuterngNumber])
+	return	
+	
 #DON'T USE THIS I SWEAR TO CHRIST
 # @bot.command()
 # async def pic(folder : str):
