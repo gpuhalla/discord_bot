@@ -112,6 +112,22 @@ async def deductPoints(userID, numPoints):
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints - ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
 	
+async def getHotSubRedditImage(subreddit, numHot):
+	#returns an array of the top # hot posts from a subreddit
+	subredditPics = r.get_subreddit(subreddit).get_hot(limit=numHot)
+	#set up url array
+	i = 0
+	urlArray = [0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0]
+	#create url array
+	for item in subredditPics:
+		urlArray[i] = (item.url)
+		i+=1
+	#random number in array
+	subrngNumber = random.randint(0, 24)
+	#picks a random url from the array
+	await bot.say(urlArray[subrngNumber])
+	return	
+	
 # @bot.command()
 # async def printusers():
 	# await bot.say("Members")
@@ -234,20 +250,8 @@ async def husbando():
 	return
 
 @bot.command()
-async def cute():
-	#returns an array of the top # hot posts from a subreddit
-	cutepics = r.get_subreddit('awwnime').get_hot(limit=25)
-	#set up url array
-	i = 0
-	cuteurl = [0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0]
-	#create url array
-	for item in cutepics:
-		cuteurl[i] = (item.url)
-		i+=1
-	#random number in array
-	cuterngNumber = random.randint(0, 24)
-	#picks a random url from the array
-	await bot.say(cuteurl[cuterngNumber])
+async def scute():
+	await getHotSubRedditImage("awwnime", 25)
 	return	
 	
 #DON'T USE THIS I SWEAR TO CHRIST
