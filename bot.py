@@ -34,7 +34,7 @@ def checkTableExists(tableName):
 #Method for picking a random picture in a folder located in the same directory
 #as the bot. Format is "!pic exampledb" or "!pic exampledb 200" for custom
 #probability
-async def uploadRandomPicture(inputFolder, bonusProb==100):
+async def uploadRandomPicture(inputFolder, bonusProb=100):
 	folderName = inputFolder
 	
 	#adds folder to dictionary if it is not already there.
@@ -58,7 +58,7 @@ async def uploadRandomPicture(inputFolder, bonusProb==100):
 			except:
 				await bot.say("Error in directory listing. Check that bonusfolder exists.")
 				return
-		await bot.say("BONUS ROUND")
+		await bot.say("__***BONUS ROUND***__")
 		length = len(bonusDBList.get(bonusfolder))
 		rngNumber = random.randint(0, length - 1)
 		fileName = bonusDBList.get(bonusfolder)[rngNumber]
