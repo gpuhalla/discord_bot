@@ -225,7 +225,7 @@ async def shrek():
 	
 @bot.command()
 async def husbando():
-	await uploadRandomPicture("husbandodb")
+	await uploadRandomPicture("husbandodb", 100)
 	return
 
 #DON'T USE THIS I SWEAR TO CHRIST
