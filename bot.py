@@ -31,7 +31,10 @@ def checkTableExists(tableName):
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
-async def uploadRandomPicture(inputFolder):
+#Method for picking a random picture in a folder located in the same directory
+#as the bot. Format is "!pic exampledb" or "!pic exampledb 200" for custom
+#probability
+async def uploadRandomPicture(inputFolder, bonusProb==100):
 	folderName = inputFolder
 	
 	#adds folder to dictionary if it is not already there.
@@ -44,7 +47,9 @@ async def uploadRandomPicture(inputFolder):
 			return
 			
 	#bonus operations
-	rngNumber = random.randint(1, 100)
+	rngNumber=0
+	if bonusProb != 0:
+		rngNumber = random.randint(1, bonusProb)
 	bonusfolder = folderName + "\\" + folderName + "bonus"
 	if rngNumber == 1:
 		if not bonusfolder in bonusDBList:
@@ -208,7 +213,7 @@ async def catgirl():
 	
 @bot.command()
 async def shrek():
-	await uploadRandomPicture("shrek")
+	await uploadRandomPicture("shrek", 0)
 	return
 	
 @bot.command()
@@ -218,19 +223,19 @@ async def husbando():
 
 @bot.command()
 async def pic(folder : str):
-	await uploadRandomPicture(folder)
+	await uploadRandomPicture(folder, 0)
 	return
 
 @bot.command()
 async def fuckmarrykill():
 	await bot.say("Bachelor(ette) #1")
-	await uploadRandomPicture("fmk")
+	await uploadRandomPicture("fmk", 0)
 	await asyncio.sleep(2)
 	await bot.say("Bachelor(ette) #2")
-	await uploadRandomPicture("fmk")
+	await uploadRandomPicture("fmk", 0)
 	await asyncio.sleep(2)
 	await bot.say("Bachelor(ette) #3")
-	await uploadRandomPicture("fmk")
+	await uploadRandomPicture("fmk", 0)
 	return
 	
 bot.loop.create_task(pointsBackgroundTask())
