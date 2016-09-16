@@ -108,7 +108,7 @@ async def deductPoints(userID, numPoints):
 	conn.commit()
 	
 @bot.command()
-async def printusers()
+async def printusers():
 	await bot.say("Members")
 	await bot.say(server.members)
 	await bot.say("bot.user.id")
