@@ -201,14 +201,7 @@ async def addquote(quote : str, attributor: str):
 	
 @bot.command()
 async def catgirl():
-	catNumber = random.randint(1, 325)
-	catName = catNumber
-	if(catNumber >= 315):
-		await bot.say("BONUS ROUND")
-		bonusCatNumber = random.randint(1, 22)
-		catName = 'BONUS' + str(bonusCatNumber)
-	imageName = "CatgirlDB\\" + str(catName) + '.jpg'
-	await bot.upload(imageName)
+	await uploadRandomPicture("CatgirlDB", 100)
 	return
 	
 @bot.command()
