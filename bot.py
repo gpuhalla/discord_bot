@@ -123,7 +123,7 @@ async def getHotSubRedditImage(subreddit, numHot):
 		urlArray[i] = (item.url)
 		i+=1
 	#random number in array
-	subrngNumber = random.randint(0, 24)
+	subrngNumber = random.randint(0, numHot - 1)
 	#picks a random url from the array
 	await bot.say(urlArray[subrngNumber])
 	return	
