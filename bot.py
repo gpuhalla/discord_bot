@@ -109,11 +109,10 @@ async def deductPoints(userID, numPoints):
 	
 @bot.command()
 async def printusers():
-
 	await bot.say("Members")
 	for server in bot.servers:
 		for member in server.members:
-			await bot.say(server.members)
+			await bot.say(member)
 			await bot.say("bot.user.id")
 			await bot.say(bot.user.id)
 			await bot.say("bot.user")
