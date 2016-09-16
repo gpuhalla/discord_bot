@@ -228,10 +228,11 @@ async def husbando():
 	await uploadRandomPicture("husbandodb")
 	return
 
-@bot.command()
-async def pic(folder : str):
-	await uploadRandomPicture(folder, 0)
-	return
+#DON'T USE THIS I SWEAR TO CHRIST
+# @bot.command()
+# async def pic(folder : str):
+	# await uploadRandomPicture(folder, 0)
+	# return
 
 @bot.command()
 async def fuckmarrykill():
