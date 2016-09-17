@@ -1,27 +1,23 @@
 import discord
 from discord.ext import commands
-import random
-import sqlite3
-import asyncio
-import os
+import random	#rng generator
+import sqlite3	#database communication
+import asyncio	#asynchronous functions
+import os		#folder scanning
+import praw 	#reddit api
 
-#reddit api
-import praw
 user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
-r = praw.Reddit(user_agent=user_agent)
+r = praw.Reddit(user_agent=user_agent)	#connects to reddit using user agent
+conn = sqlite3.connect('bot_db.sqlite')	#sqlite connection
+c = conn.cursor()						#sqlite communication cursor
+points_cursor = conn.cursor()			#background cursor to reduce command conflicts
+masterDBList = {}						#List of folders in the same directory as the bot
+bonusDBList = {}						#List of nested bonus folders
 
-#Exact filepath may be needed.
-conn = sqlite3.connect('bot_db.sqlite')
-c = conn.cursor()
-
-#Use second cursor for all the points stuff that happens 
-#in the background task to reduce conflicts with other commands
-points_cursor = conn.cursor()
-
+#bot instantiator
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
-masterDBList = {}
-bonusDBList = {}
 
+#prints to console when bot starts up
 @bot.event
 async def on_ready():
 	print('Logged in as')
@@ -29,16 +25,16 @@ async def on_ready():
 	print(bot.user.id)
 	print('------')
 
-
-def checkTableExists(tableName):
-	#Checks if a table exists
+#checks if a table exists
+async def checkTableExists(tableName):
 	c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", (tableName, ))
 	#Returns the query result. 0 for does not exist. 1 for exists.
 	return c.fetchone()[0]
 	
 #Method for picking a random picture in a folder located in the same directory
-#as the bot. Format is "!pic exampledb" or "!pic exampledb 200" for custom
-#probability
+#as the bot. Default probability is 1/100
+#e.g. !pic husbandodb
+#e.g. !pic husbandodb 200
 async def uploadRandomPicture(inputFolder, bonusProb=100):
 	folderName = inputFolder
 	
@@ -83,6 +79,7 @@ async def uploadRandomPicture(inputFolder, bonusProb=100):
 	await bot.upload(folderName + "\\" + masterDBList.get(folderName)[rngNumber])
 	return
 
+#increments points for each user currently in the channel every 60s
 async def pointsBackgroundTask():
 	await bot.wait_until_ready()
 	if not checkTableExists("Points"):
@@ -93,7 +90,9 @@ async def pointsBackgroundTask():
 				if member.status == discord.enums.Status.online and member.id != bot.user.id:
 					await addPoints(member.id, 1)
 		await asyncio.sleep(60)
-	
+
+#adds points to a user
+#e.g. addPoints(member.id, 1) 		
 async def addPoints(userID, numPoints):
 	points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
 	if points_cursor.fetchone() is None:
@@ -102,7 +101,9 @@ async def addPoints(userID, numPoints):
 	points_cursor.fetchall()
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints + ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
-	
+
+#removes points from a user
+#e.g. deductPoints(member.id, 1) 
 async def deductPoints(userID, numPoints):
 	points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
 	if points_cursor.fetchone() is None:
@@ -111,13 +112,15 @@ async def deductPoints(userID, numPoints):
 	points_cursor.fetchall()
 	points_cursor.execute("UPDATE Points SET numPoints = numPoints - ? WHERE UserID = ?", (int(numPoints), str(userID), ))
 	conn.commit()
-	
+
+#pulls the top few hot posts from the requested subreddit
+#e.g. getHotSubRedditImage("awwnime", 25)
 async def getHotSubRedditImage(subreddit, numHot):
 	#returns an array of the top # hot posts from a subreddit
 	subredditPics = r.get_subreddit(subreddit).get_hot(limit=numHot)
 	#set up url array
 	i = 0
-	urlArray = [0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0 , 0, 0, 0, 0]
+	urlArray = [0] * 25
 	#create url array
 	for item in subredditPics:
 		urlArray[i] = (item.url)
@@ -127,32 +130,13 @@ async def getHotSubRedditImage(subreddit, numHot):
 	#picks a random url from the array
 	await bot.say(urlArray[subrngNumber])
 	return	
-	
-# @bot.command()
-# async def printusers():
-	# await bot.say("Members")
-	# for server in bot.servers:
-		# for member in server.members:
-			# await bot.say("***Member***")
-			# await bot.say(member)
-			# await bot.say("***Member ID***")
-			# await bot.say(member.id)
-	# await bot.say("***bot.user.id***")
-	# await bot.say(bot.user.id)
-	# await bot.say("***bot.user***")
-	# await bot.say(bot.user)
-	# await bot.say("***bot***")
-	# await bot.say(bot)
-	
-@bot.command()
-async def commend():
-	await bot.say('Added one point to !')
-	return
 
+#tests if bot is actually functioning
 @bot.command()
 async def test():
 	await bot.say('Test!')
 
+#prints how many points the user has that issued the command
 @bot.command(pass_context=True)
 async def points(ctx):
 	userID = ctx.message.author.id
@@ -165,7 +149,7 @@ async def points(ctx):
 	else:
 		await bot.say("{0} has a total of {1} points!".format(str(name), int(points[0])))
 	
-
+#prints the top five point holders
 @bot.command()
 async def leaderboard():
 	c.execute("SELECT UserID, numPoints FROM Points ORDER BY numPoints DESC LIMIT 5")
@@ -179,7 +163,10 @@ async def leaderboard():
 		position += 1
 	
 	await bot.say(boardstring)
-		
+
+#plays a 50% winrate game with double prize payout for the user
+#e.g. !roulette 50
+#e.g. !roulette all
 @bot.command(pass_context=True)
 async def roulette(ctx, amount : str):
 	userID = ctx.message.author.id
@@ -212,6 +199,7 @@ async def roulette(ctx, amount : str):
 			await bot.say("{0} now has {1} points...".format(name, points - amount))
 	return
 
+#prints a random quote from the sqlite database
 @bot.command()
 async def quote():
 	#Checks if table exists first. Prints a random result if it does.
@@ -225,7 +213,9 @@ async def quote():
 		quote = returned[2]
 		await bot.say(quote + "\n  -" + attributor)
 	return
-	
+
+#adds a quote to the sqlite database
+#e.g. !addquote "I like food" "Lucas"
 @bot.command()
 async def addquote(quote : str, attributor: str):
 	#Checks if table exists before adding quote. Creates table if it does not.
@@ -233,12 +223,13 @@ async def addquote(quote : str, attributor: str):
 		c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
 	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?);", (quote, attributor))
 	conn.commit()
-	
+
+#the whole reason this bot exists
 @bot.command()
 async def catgirl():
 	await uploadRandomPicture("CatgirlDB", 100)
 	return
-	
+
 @bot.command()
 async def shrek():
 	await uploadRandomPicture("shrek", 0)
@@ -253,12 +244,6 @@ async def husbando():
 async def scute():
 	await getHotSubRedditImage("awwnime", 25)
 	return	
-	
-#DON'T USE THIS I SWEAR TO CHRIST
-# @bot.command()
-# async def pic(folder : str):
-	# await uploadRandomPicture(folder, 0)
-	# return
 
 @bot.command()
 async def fuckmarrykill():
@@ -271,6 +256,10 @@ async def fuckmarrykill():
 	await bot.say("Bachelor(ette) #3")
 	await uploadRandomPicture("fmk", 0)
 	return
-	
+
+#These need to be at the bottom
+#sets up loop
 bot.loop.create_task(pointsBackgroundTask())
+#bot token for connection to the chat
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrjL4A.TwmYMflSnCkmz_MSueuSSx2Y6OE')
+
