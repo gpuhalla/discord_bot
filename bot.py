@@ -13,6 +13,7 @@ c = conn.cursor()						#sqlite communication cursor
 points_cursor = conn.cursor()			#background cursor to reduce command conflicts
 masterDBList = {}						#List of folders in the same directory as the bot
 bonusDBList = {}						#List of nested bonus folders
+textChatIDlist = ["227203270186106890", "222886725288984576", "218047094835904512", "227209642701357056"] #funzone id, staff id, admin id, bot_development id
 
 #bot instantiator
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
@@ -216,45 +217,58 @@ async def quote():
 
 #adds a quote to the sqlite database
 #e.g. !addquote "I like food" "Lucas"
-@bot.command()
-async def addquote(quote : str, attributor: str):
-	#Checks if table exists before adding quote. Creates table if it does not.
-	if not checkTableExists("quotes"):
-		c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
-	c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?);", (quote, attributor))
+@bot.command(pass_context=True)
+async def addquote(ctx, quote : str, attributor: str):
+	channelID = ctx.message.channel.id
+	if channelID in textChatIDlist:
+		#Checks if table exists before adding quote. Creates table if it does not.
+		if not checkTableExists("quotes"):
+			c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
+		c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?);", (quote, attributor))
 	conn.commit()
 
 #the whole reason this bot exists
-@bot.command()
-async def catgirl():
-	await uploadRandomPicture("CatgirlDB", 100)
+@bot.command(pass_context=True)
+async def catgirl(ctx):
+	channelID = ctx.message.channel.id
+	if channelID in textChatIDlist:
+		await uploadRandomPicture("CatgirlDB", 100)
 	return
 
-@bot.command()
-async def shrek():
-	await uploadRandomPicture("shrek", 0)
+@bot.command(pass_context=True)
+async def shrek(ctx):
+	channelID = ctx.message.channel.id
+	if channelID in textChatIDlist:
+		await uploadRandomPicture("shrek", 0)
 	return
 	
-@bot.command()
-async def husbando():
-	await uploadRandomPicture("husbandodb", 100)
+@bot.command(pass_context=True)
+async def husbando(ctx):
+	channelID = ctx.message.channel.id
+	if channelID in textChatIDlist:
+		await uploadRandomPicture("husbandodb", 100)
 	return
 
-@bot.command()
-async def scute():
-	await getHotSubRedditImage("awwnime", 25)
+@bot.command(pass_context=True)
+async def scute(ctx):
+	channelID = ctx.message.channel.id
+	#print(channelID) debug to find channel id
+	if channelID in textChatIDlist:
+		await getHotSubRedditImage("awwnime", 25)
 	return	
 
-@bot.command()
-async def fuckmarrykill():
-	await bot.say("Bachelor(ette) #1")
-	await uploadRandomPicture("fmk", 0)
-	await asyncio.sleep(2)
-	await bot.say("Bachelor(ette) #2")
-	await uploadRandomPicture("fmk", 0)
-	await asyncio.sleep(2)
-	await bot.say("Bachelor(ette) #3")
-	await uploadRandomPicture("fmk", 0)
+@bot.command(pass_context=True)
+async def fuckmarrykill(ctx):
+	channelID = ctx.message.channel.id
+	if channelID in textChatIDlist:
+		await bot.say("Bachelor(ette) #1")
+		await uploadRandomPicture("fmk", 0)
+		await asyncio.sleep(2)
+		await bot.say("Bachelor(ette) #2")
+		await uploadRandomPicture("fmk", 0)
+		await asyncio.sleep(2)
+		await bot.say("Bachelor(ette) #3")
+		await uploadRandomPicture("fmk", 0)
 	return
 
 #These need to be at the bottom
