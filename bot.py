@@ -131,7 +131,7 @@ async def getHotSubRedditImage(subreddit, numHot):
 	#picks a random url from the array
 	await bot.say(urlArray[subrngNumber])
 	return	
-
+	
 #tests if bot is actually functioning
 @bot.command()
 async def test():
@@ -276,4 +276,3 @@ async def fuckmarrykill(ctx):
 bot.loop.create_task(pointsBackgroundTask())
 #bot token for connection to the chat
 bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrjL4A.TwmYMflSnCkmz_MSueuSSx2Y6OE')
-
