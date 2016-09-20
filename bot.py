@@ -259,16 +259,14 @@ async def scute(ctx):
 
 @bot.command(pass_context=True)
 async def fuckmarrykill(ctx):
+
+@bot.command(pass_context=True)
+async def help(ctx):
 	channelID = ctx.message.channel.id
 	if channelID in textChatIDlist:
-		await bot.say("Bachelor(ette) #1")
-		await uploadRandomPicture("fmk", 0)
-		await asyncio.sleep(2)
-		await bot.say("Bachelor(ette) #2")
-		await uploadRandomPicture("fmk", 0)
-		await asyncio.sleep(2)
-		await bot.say("Bachelor(ette) #3")
-		await uploadRandomPicture("fmk", 0)
+		await bot.say("Commands:\n!points\n!leaderboard\n!roulette #\n!quote!addquote quote name\n!catgirl\n!shrek\n!husbando\n!scute\n!fuckmarrykill")
+	else:
+		await bot.say("Commands:\n!points\n!leaderboard\n!roulette #\n!quote")
 	return
 
 #These need to be at the bottom
