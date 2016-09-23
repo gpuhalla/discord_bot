@@ -81,6 +81,7 @@ async def uploadRandomPicture(inputFolder, bonusProb=100):
 		while fileName == "Thumbs.db":
 			rngNumber = random.randint(0, length - 1)
 			fileName = bonusDBList.get(bonusfolder)[rngNumber]
+		print(bonusfolder + "\\" + bonusDBList.get(bonusfolder)[rngNumber])
 		await bot.upload(bonusfolder + "\\" + bonusDBList.get(bonusfolder)[rngNumber])
 		return
 	
