@@ -65,7 +65,7 @@ async def uploadRandomPicture(inputFolder, bonusProb=100):
 	#bonus operations
 	rngNumber=0
 	if bonusProb != 0:
-		rngNumber = random.randint(1, bonusProb)
+		rngNumber = 1 #rngNumber = random.randint(1, bonusProb)
 	bonusfolder = folderName + "\\" + folderName + "bonus"
 	if rngNumber == 1:
 		if not bonusfolder in bonusDBList:
@@ -285,7 +285,6 @@ async def fuckmarrykill(ctx):
 		await uploadRandomPicture("fmk", 0)
 	return
 
-#lucas whyyy
 #@bot.command(pass_context=True)
 #async def help(ctx):
 #	channelID = ctx.message.channel.id
