@@ -5,6 +5,12 @@ import sqlite3	#database communication
 import asyncio	#asynchronous functions
 import os		#folder scanning
 import praw 	#reddit api
+import hashlib	#for random
+import time		#for random
+
+import music	#music file
+import youtube_dl #for music converting
+
 
 user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
 r = praw.Reddit(user_agent=user_agent)	#connects to reddit using user agent
@@ -15,8 +21,16 @@ masterDBList = {}						#List of folders in the same directory as the bot
 bonusDBList = {}						#List of nested bonus folders
 textChatIDlist = ["227203270186106890", "222886725288984576", "218047094835904512", "227209642701357056"] #funzone id, staff id, admin id, bot_development id
 
+#a whole bunch of nonsense to get somewhat better random values
+timeCounter = str(time.time())
+timeCounter = timeCounter.encode('utf-8')
+sudoRandom = hashlib.sha256(timeCounter).hexdigest()
+random.seed(sudoRandom)
+
 #bot instantiator
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
+#add music functionaility from file
+bot.add_cog(music.Music(bot))
 
 #prints to console when bot starts up
 @bot.event
