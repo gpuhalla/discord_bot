@@ -11,6 +11,7 @@ import time		#for random
 import music	#music file
 import youtube_dl #for music converting
 
+#import speechRecognition #speech stuff - not usable for the time being
 
 user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
 r = praw.Reddit(user_agent=user_agent)	#connects to reddit using user agent
@@ -31,6 +32,7 @@ random.seed(sudoRandom)
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
 #add music functionaility from file
 bot.add_cog(music.Music(bot))
+#bot.add_cog(speechRecognition.Speech(bot)) #not until we can get a real input
 
 #prints to console when bot starts up
 @bot.event
