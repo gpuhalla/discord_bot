@@ -11,7 +11,7 @@ if not discord.opus.is_loaded():
     # opus library is located in and with the proper filename.
     # note that on windows this DLL is automatically provided for you
     discord.opus.load_opus('opus')
-
+    
 class VoiceEntry:
     def __init__(self, message, player):
         self.requester = message.author
@@ -123,6 +123,7 @@ class Music:
                 await state.voice.move_to(summoned_channel)
 
         return True
+           
 
     @commands.command(pass_context=True, no_pm=True)
     async def play(self, ctx, *, song : str):
