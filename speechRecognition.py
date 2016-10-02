@@ -4,10 +4,9 @@
 import asyncio
 import discord
 from discord.ext import commands
+import os       #folder scanning
 
-import music
 
-#from bot import getHotSubRedditImage
 
 from gtts import gTTS
 from tempfile import TemporaryFile
@@ -30,14 +29,17 @@ if not discord.opus.is_loaded():
 
 async def readUsingTTS(ttsMessage, voiceIn):
    
-    tts = gTTS(text=ttsMessage, lang="en")
-    voiceTempFile = TemporaryFile()
-    tts.write_to_fp(voiceTempFile)
+    tts = gTTS(text=ttsMessage, lang='en')
+    #voiceTempFile = TemporaryFile()
+    tts.save('temp.mp3')
     
     #voiceConnect = yield from client.join_voice_channel(channel)
-    voicePlayer = voiceIn.create_ffmpeg_player(voiceTempFile)
+    #voicePlayer = voiceIn.create_ffmpeg_player(voiceTempFile)
+    voicePlayer = voiceIn.create_ffmpeg_player('temp.mp3')
     voicePlayer.start()
-    voiceTempFile.close()
+    await asyncio.sleep(4)
+    #voiceTempFile.close()
+    os.remove('temp.mp3')
     return  
 
 
@@ -74,6 +76,8 @@ class Speech:
                 
     @commands.command(pass_context=True, no_pm=True)
     async def listen(self, ctx):
+
+        
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
         
@@ -107,14 +111,14 @@ class Speech:
                     #await self.bot.say("Google Speech Recognition thinks you said " + voiceData)
                     if 'banana' in voiceData:
                         await self.bot.say("Banana!")
-                    elif 'bot search' in voiceData:
+                    elif 'robot search' in voiceData:
                         imageInfo = voiceData[7:]
                         #bot.getHotSubRedditImage(imageInfo, 25)
                     elif 'build turret' in voiceData:
                         await self.bot.say("__***CANCEL COMMAND***__")
                     elif 'cat girl' in voiceData:
                         await self.bot.say("_NYAA_")
-                        await readUsingTTS("NYAAAAA", voice)
+                        await readUsingTTS("omg so kawaii desu nya", voice)
                     elif 'robot stop' in voiceData:
                         activeListening = False
                     
@@ -125,6 +129,5 @@ class Speech:
                     print("Could not request results from Google Speech Recognition service; {0}".format(e))
                     #await self.bot.say("Could not request results from Google Speech Recognition service; {0}".format(e))
                 
-                
-                
-from bot.py import getHotSubRedditImage #this doesn't work :/
+
+        
