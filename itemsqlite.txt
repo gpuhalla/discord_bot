@@ -1,0 +1,18 @@
+CREATE TABLE `rpgitems` (
+	`ID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`owner`	INTEGER NOT NULL,
+	`price`	INTEGER DEFAULT 1,
+	`type`	TEXT NOT NULL,
+	`hands`	INTEGER DEFAULT 0,
+	`physicalDamage`	INTEGER DEFAULT 0,
+	`fireDamage`	INTEGER DEFAULT 0,
+	`iceDamage`	INTEGER DEFAULT 0,
+	`shockDamage`	INTEGER DEFAULT 0,
+	`physicalArmor`	INTEGER DEFAULT 0,
+	`fireArmor`	INTEGER DEFAULT 0,
+	`iceArmor`	INTEGER DEFAULT 0,
+	`shockArmor`	INTEGER DEFAULT 0,
+	`attributes`	TEXT DEFAULT 'A',
+	`name`	TEXT,
+	FOREIGN KEY(`owner`) REFERENCES `rpgcharacter`(`userID`)
+);
