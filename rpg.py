@@ -1,5 +1,8 @@
+import discord
+from discord.ext import commands
 import sqlite3  #database communication
 import random
+
 
 class Character:
 	
@@ -91,10 +94,10 @@ class Item:
 		self.shockArmor = shockArmor
 		self.attributes = attributes
 		self.name = name
-		if id != 0:
-			self.getItem(id)
-		else:
-			self.genItem
+#		if id != 0:
+#			self.getItem(id)
+#		else:
+#			self.genItem
 		
 	def getItem(self, id = "0"):
 		if id == "0":
@@ -164,6 +167,43 @@ class Item:
 		self.shockDamage *= quality[1] * tier
 		
 		self.name = qualitykey + " " + materialkey + " " + typekey + " " + attributekey
+        
+        
+    def getShopItems(self):
+        shopList = [rpg.Item(0)]*10
+        for each item in shoplist:
+            item.genWeapon()
+        return shopList
+        
+    @commands.command(pass_context=True)
+    async def rpgitemshop(self, ctx):
+        itemList = getShopItems()
+        markdownString = "```\n__**Item Shop**__\n"
+        counter = 0
+        for item in shopList:
+            itemName = item.name[counter]
+            itemPrice = item.price[counter]
+            markdownString += "{0}.) <@{1}>      {2} points\n".format(counter+1, itemName, itemPrice)
+            counter += 1
+            
+        markdownString += "```"
+        self.bot.say(markdownString)
 		
-		
-		
+    @commands.command(pass_context=True)
+    async def rpgbuy(self, ctx, item: int):
+		if item < 11 and item > 0:
+            #subtract points
+            #aaaaaaa this involves me figuring out the same problem for sr
+            
+            #add item to character inv
+            c.execute("SELECT UserID, numPoints FROM Points ORDER BY RANDOM() LIMIT 10")
+            leaders = c.fetchall()
+            
+            #remove item from shop
+            
+        
+        else
+            self.bot.say("Not a valid Item Shop number")
+        
+        
+        
