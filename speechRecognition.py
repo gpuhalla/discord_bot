@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 import os       #folder scanning
 
-
+import music
 
 from gtts import gTTS
 from tempfile import TemporaryFile
@@ -73,6 +73,7 @@ class Speech:
                     self.bot.loop.create_task(state.voice.disconnect())
             except:
                 pass
+
                 
     @commands.command(pass_context=True, no_pm=True)
     async def listen(self, ctx):
@@ -87,6 +88,7 @@ class Speech:
         
             # obtain audio from the microphone
             r = sr.Recognizer()
+            #r.pause_threshold = 0.8
             
             with sr.Microphone() as source:
                 r.adjust_for_ambient_noise(source)
@@ -112,8 +114,14 @@ class Speech:
                     if 'banana' in voiceData:
                         await self.bot.say("Banana!")
                     elif 'robot search' in voiceData:
-                        imageInfo = voiceData[7:]
+                        imageInfo = voiceData[13:]
                         #bot.getHotSubRedditImage(imageInfo, 25)
+                    elif 'robot repeat' in voiceData:
+                        toRepeat = voiceData[13:]
+                        await readUsingTTS(toRepeat, voice)
+                    elif 'robot play' in voiceData:
+                        playInfo = voiceData[10:]
+                        music.Music.play(playInfo)
                     elif 'build turret' in voiceData:
                         await self.bot.say("__***CANCEL COMMAND***__")
                     elif 'cat girl' in voiceData:

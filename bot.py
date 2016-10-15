@@ -13,6 +13,8 @@ import youtube_dl #for music converting
 
 import speechRecognition #speech stuff 
 
+import systools
+
 user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
 r = praw.Reddit(user_agent=user_agent)  #connects to reddit using user agent
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
@@ -33,6 +35,7 @@ bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot'
 #add music functionaility from file
 bot.add_cog(music.Music(bot))
 bot.add_cog(speechRecognition.Speech(bot)) 
+bot.add_cog(systools.SysTools(bot))
 
 #prints to console when bot starts up
 @bot.event
