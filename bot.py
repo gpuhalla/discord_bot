@@ -321,4 +321,4 @@ async def dance(ctx):
 #sets up loop
 bot.loop.create_task(pointsBackgroundTask())
 #bot token for connection to the chat
-bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CrjL4A.TwmYMflSnCkmz_MSueuSSx2Y6OE')
+bot.run('')
