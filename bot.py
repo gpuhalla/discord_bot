@@ -15,6 +15,8 @@ import speechRecognition #speech stuff
 
 import systools
 
+import tweets
+
 user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
 r = praw.Reddit(user_agent=user_agent)  #connects to reddit using user agent
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
@@ -36,6 +38,7 @@ bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot'
 bot.add_cog(music.Music(bot))
 bot.add_cog(speechRecognition.Speech(bot)) 
 bot.add_cog(systools.SysTools(bot))
+bot.add_cog(tweets.Twitter(bot))
 
 #prints to console when bot starts up
 @bot.event
@@ -307,6 +310,26 @@ async def dance(ctx):
             await asyncio.sleep(.75)
             await bot.edit_message(messageToEdit, "└(=^‥^=)┐")
     return
+    
+                     
+@bot.command(pass_context=True)
+async def spell(ctx, message : str):
+    channelID = ctx.message.channel.id
+    if channelID in textChatIDlist:
+        if len(message) < 21:
+            messageToEdit2 = await bot.say(message[0])
+            for x in range (0, len(message)):
+                await bot.edit_message(messageToEdit2, message[0:x+1])
+                await asyncio.sleep(.5)
+        else:
+            await bot.say("That's too long!")
+            
+@bot.command(pass_context=True)
+async def why(ctx):
+    channelID = ctx.message.channel.id
+    if channelID in textChatIDlist:
+         await bot.say("Because Josh and Lucas haven't done anything for a while, So Gerry is the one in control.")
+         
 
 #@bot.command(pass_context=True)
 #async def help(ctx):

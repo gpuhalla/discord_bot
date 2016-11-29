@@ -11,6 +11,9 @@ from email.mime.text import MIMEText    #for writing email
 import sys                              #to be able to shutdown/restart
 import os                               #file management
 
+import time     #for random
+
+
 #MOST STUFF COMMENTED OUT RELATES TO GMAIL API, I'LL GET AROUND TO IT EVENTUALLY
 
 
@@ -156,7 +159,7 @@ class SysTools:
         global actionToBeRun
         userID = ctx.message.author.id
         if userID in userIDlist:
-            if action in ['shutdown', 'restart', 'command']:
+            if action in ['shutdown', 'restart', 'command', 'nuke']:
                 #store command and action
                 commandToBeRun = commandOrCode
                 actionToBeRun = action
@@ -177,6 +180,10 @@ class SysTools:
                         print('restart executed')
                         await os.execv(sys.executable, ['python'] + sys.argv)
                         
+                    elif actionToBeRun == 'nuke':
+                        print('nuke executed')
+                        await self.bot.say("The nuke will detonate in 60 seconds unless the disarm command is sent.")
+                    
                     """    
                     elif actionToBeRun == 'command':
                         #execute command
@@ -188,7 +195,21 @@ class SysTools:
                         
                 else:
                      await self.bot.say("Incorrect Security Code")
+                     
+                     
+    """                 
+    @commands.command(pass_context=True)
+    async def rewrite(self, ctx, messageID, editedMessage):
+        channelID = ctx.message.channel.id
+        userID = ctx.message.author.id
+        if userID in userIDlist:
+            channelWithMessage = self.bot.loop.get_channel(channelID)
+            print(channelWithMessage)
+            messageToBeRewritten = self.bot.loop.get_message(channelWithMessage,messageID)
+            print(messageToBeRewritten)
+            await self.bot.edit_message(messageToBeRewritten, editedMessage)
+    """
+        
 
-                
-
+                     
 
