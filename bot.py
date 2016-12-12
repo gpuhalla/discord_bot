@@ -17,8 +17,11 @@ import systools
 
 import tweets
 
-user_agent = "python Discord Random Image grabber v1.0 by /u/gapman9"
-r = praw.Reddit(user_agent=user_agent)  #connects to reddit using user agent
+r = praw.Reddit(client_id='',
+                     client_secret='',
+                     password='',
+                     user_agent='',
+                     username='')
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
 c = conn.cursor()                       #sqlite communication cursor
 points_cursor = conn.cursor()           #background cursor to reduce command conflicts
@@ -141,7 +144,7 @@ async def deductPoints(userID, numPoints):
 #e.g. getHotSubRedditImage("awwnime", 25)
 async def getHotSubRedditImage(subreddit, numHot):
     #returns an array of the top # hot posts from a subreddit
-    subredditPics = r.get_subreddit(subreddit).get_hot(limit=numHot)
+    subredditPics = r.subreddit(subreddit).hot(limit=numHot)
     #set up url array
     i = 0
     urlArray = [0] * 25
@@ -344,4 +347,4 @@ async def why(ctx):
 #sets up loop
 bot.loop.create_task(pointsBackgroundTask())
 #bot token for connection to the chat
-bot.run('')
+bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CumQ_g.d5bmMV04rEz3SZ0zE8odP5OEoP0')
