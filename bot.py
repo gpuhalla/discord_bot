@@ -17,6 +17,8 @@ import systools
 
 import tweets
 
+import tone
+
 r = praw.Reddit(client_id='',
                      client_secret='',
                      password='',
@@ -42,6 +44,7 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(speechRecognition.Speech(bot)) 
 bot.add_cog(systools.SysTools(bot))
 bot.add_cog(tweets.Twitter(bot))
+bot.add_cog(tone.Tone(bot))
 
 #prints to console when bot starts up
 @bot.event
@@ -347,4 +350,4 @@ async def why(ctx):
 #sets up loop
 bot.loop.create_task(pointsBackgroundTask())
 #bot token for connection to the chat
-bot.run('MjI0MjM0MzUzMTcxODkwMTc3.CumQ_g.d5bmMV04rEz3SZ0zE8odP5OEoP0')
+bot.run('')
