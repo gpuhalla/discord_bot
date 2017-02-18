@@ -11,13 +11,15 @@ import time     #for random
 import music    #music file
 import youtube_dl #for music converting
 
-import speechRecognition #speech stuff 
+#import speechRecognition #speech stuff 
 
 import systools
 
 import tweets
 
 import tone
+
+import isCatgirl
 
 r = praw.Reddit(client_id='',
                      client_secret='',
@@ -41,10 +43,11 @@ random.seed(sudoRandom)
 bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot')
 #add music functionaility from file
 bot.add_cog(music.Music(bot))
-bot.add_cog(speechRecognition.Speech(bot)) 
+#bot.add_cog(speechRecognition.Speech(bot)) 
 bot.add_cog(systools.SysTools(bot))
 bot.add_cog(tweets.Twitter(bot))
 bot.add_cog(tone.Tone(bot))
+bot.add_cog(isCatgirl.isCatgirl(bot))
 
 #prints to console when bot starts up
 @bot.event
@@ -80,7 +83,7 @@ async def uploadRandomPicture(inputFolder, bonusProb=100):
     rngNumber=0
     if bonusProb != 0:
         rngNumber = random.randint(1, bonusProb)
-    bonusfolder = folderName + "\\" + folderName + "bonus"
+    bonusfolder = folderName + "//" + folderName + "bonus"
     if rngNumber == 1:
         if not bonusfolder in bonusDBList:
             try:
@@ -96,7 +99,7 @@ async def uploadRandomPicture(inputFolder, bonusProb=100):
             rngNumber = random.randint(0, length - 1)
             fileName = bonusDBList.get(bonusfolder)[rngNumber]
         #print(bonusfolder + "\\" + bonusDBList.get(bonusfolder)[rngNumber]) #debug for bonus error
-        await bot.upload(bonusfolder + "\\" + bonusDBList.get(bonusfolder)[rngNumber])
+        await bot.upload(bonusfolder + "//" + bonusDBList.get(bonusfolder)[rngNumber])
         return
     
     #normal operations
@@ -106,7 +109,8 @@ async def uploadRandomPicture(inputFolder, bonusProb=100):
     while fileName == "Thumbs.db":
         rngNumber = random.randint(0, length - 1)
         fileName = masterDBList.get(folderName)[rngNumber]
-    await bot.upload(folderName + "\\" + masterDBList.get(folderName)[rngNumber])
+    #print(folderName + "//" + masterDBList.get(folderName)[rngNumber])
+    await bot.upload(folderName + "//" + masterDBList.get(folderName)[rngNumber])
     return
 
 #increments points for each user currently in the channel every 60s
