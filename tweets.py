@@ -17,7 +17,7 @@ consumer_secret = ""
 access_key = ""
 access_secret = ""
 
-textChatIDlist = ["227203270186106890", "222886725288984576", "218047094835904512", "227209642701357056"] #funzone id, staff id, admin id, bot_development id
+textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"] #funzone id, staff id, admin id, bot_development id
     
 def get_all_tweets(screen_name):
     #Twitter only allows access to a users most recent 3240 tweets with this method
@@ -52,6 +52,9 @@ def get_all_tweets(screen_name):
     tweetText = str(pickedTweet[1])
 
     formattedTweet = "Twitter: @LuncanDucas\n" + date_str + "\n" + tweetText[2: len(tweetText)-1]
+    
+    if '@' in tweetText[:8]:
+        formattedTweet = get_all_tweets(screen_name)
     
     return str(formattedTweet)
     
