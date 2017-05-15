@@ -2,7 +2,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"] #funzone id, staff id, admin id, bot_development id
+textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"]
 
 if not discord.opus.is_loaded():
     # the 'opus' library here is opus.dll on windows
