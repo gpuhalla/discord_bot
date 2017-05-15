@@ -7,20 +7,19 @@ import os       #folder scanning
 import praw     #reddit api
 import hashlib  #for random
 import time     #for random
+import logging
 
 import music    #music file
 import youtube_dl #for music converting
+import markovify    #for markov chains
 
 #import speechRecognition #speech stuff 
-
 #import systools
-
 import tweets
-
 #import tone
-
 #import isCatgirl
 
+logging.basicConfig(level=logging.INFO) #INFO/DEBUG
 r = praw.Reddit(client_id='',
                      client_secret='',
                      password='',
@@ -175,10 +174,31 @@ def getAmazonLink(number):
 
     return str(amazonLink)
     
+async def buildDatabase(username, channel):   
+    with open("simulations/" + username[3:len(username)-1] + ".txt", 'w+') as file:
+        async for message in bot.logs_from(channel, limit=4000):
+            if message.author.id == username[3:len(username)-1]: # and str(message.content)[0] != "!":
+                #print(message.content)     #somehow it breaks without these lines
+                #print(message.author.id)
+                #print(username[3:len(username)-1])
+                file.write("{}\n".format(message.content))
+    file.close()
+
+def buildComment(dbFilename):
+    # Get raw text as string.
+    with open("simulations/" + dbFilename + ".txt") as f:
+        text = f.read()
+    # Build the model.
+    text_model = markovify.Text(text) 
+    # Print randomly-generated sentences
+    return text_model.make_sentence()
+       
+    
 #tests if bot is actually functioning
 @bot.command()
 async def test():
     await bot.say('Test!')
+
 
 #prints how many points the user has that issued the command
 @bot.command(pass_context=True)
@@ -371,7 +391,17 @@ async def amazon(ctx): #number : int
         '''
         number = random.randint(0, 941)
         amazonLink = getAmazonLink(number)
-        await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))         
+        await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))
+
+        
+@bot.command(pass_context=True)
+async def simulate(ctx, username : str):
+        channelID = ctx.message.channel.id
+        channelToGetData = bot.get_channel("170682390786605057") #general
+        if channelID in textChatIDlist:
+            await buildDatabase(username, channelToGetData)
+            comment = buildComment(username[3:len(username)-1])
+            await bot.say(comment)        
 
         
         
