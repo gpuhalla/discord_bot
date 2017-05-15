@@ -6,7 +6,7 @@ import json
 from watson_developer_cloud import VisualRecognitionV3
 
 
-textChatIDlist = ["227203270186106890", "222886725288984576", "218047094835904512", "227209642701357056"] #funzone id, staff id, admin id, bot_development id
+textChatIDlist = ["170682390786605057", "302137557896921089"] 
 
 def getCatgirlScore(json):
 

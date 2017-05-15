@@ -5,7 +5,7 @@ from discord.ext import commands
 import json
 from watson_developer_cloud import ToneAnalyzerV3
 
-textChatIDlist = ["227203270186106890", "222886725288984576", "218047094835904512", "227209642701357056"] #funzone id, staff id, admin id, bot_development id
+textChatIDlist = ["170682390786605057", "302137557896921089"]
 
 def getClosestTone(json, toneCategory):
     forCounter = 5
@@ -13,7 +13,6 @@ def getClosestTone(json, toneCategory):
         forCounter = 3
 
     scoreList = []
-    directory = json["document_tone"]["tone_categories"][toneCategory]["tones"]
     for x in range(0, forCounter):
         scoreList.append([json["document_tone"]["tone_categories"][toneCategory]["tones"][x]["tone_name"],json["document_tone"]["tone_categories"][toneCategory]["tones"][x]['score']])
 
