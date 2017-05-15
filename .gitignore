@@ -1,1 +1,10 @@
-test.py
+__pycache__/
+catgirl2/
+CatgirlDB/
+fmk/
+husbandodb/
+Portable Bot Archive/
+shrek/
+
+*.zip
+*.bat
