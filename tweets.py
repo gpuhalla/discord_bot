@@ -17,7 +17,7 @@ consumer_secret = ""
 access_key = ""
 access_secret = ""
 
-textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"] #funzone id, staff id, admin id, bot_development id
+textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"]
     
 def get_all_tweets(screen_name):
     #Twitter only allows access to a users most recent 3240 tweets with this method
@@ -31,18 +31,18 @@ def get_all_tweets(screen_name):
     alltweets = []  
     
     #make initial request for most recent tweets (200 is the maximum allowed count)
-    new_tweets = api.user_timeline(screen_name = screen_name,count=200)
+    new_tweets = api.user_timeline(screen_name = screen_name,count=110)
     
     #save most recent tweets
     alltweets.extend(new_tweets)
     
     #save the id of the oldest tweet less one
-    oldest = alltweets[-1].id - 1
+    #oldest = alltweets[-1].id - 1
     
     #transform the tweepy tweets into a 2D array that will populate the csv 
     outtweets = [[tweet.created_at, tweet.text.encode("utf-8")] for tweet in alltweets]
     
-    rngNumber = random.randint(2, 199)
+    rngNumber = random.randint(2, 100)
     
     pickedTweet = outtweets[rngNumber]
     
@@ -50,8 +50,11 @@ def get_all_tweets(screen_name):
     date_str = dt_obj.strftime("%m-%d-%Y    %H:%M:%S")
     
     tweetText = str(pickedTweet[1])
-
-    formattedTweet = "Twitter: @LuncanDucas\n" + date_str + "\n" + tweetText[2: len(tweetText)-1]
+    #print(tweetText)
+    tweetText.replace('\\n', '\n')
+    #print(tweetText)
+    
+    formattedTweet = "Twitter: @" + screen_name + "\n" + date_str + "\n" + tweetText[2: len(tweetText)-1]
     
     if '@' in tweetText[:8]:
         formattedTweet = get_all_tweets(screen_name)
