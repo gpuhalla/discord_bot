@@ -12,6 +12,7 @@ import logging
 import music    #music file
 import youtube_dl #for music converting
 import markovify    #for markov chains
+import aiofiles     #so the simulate writes can work
 
 #import speechRecognition #speech stuff 
 #import systools
@@ -47,6 +48,7 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
+
 
 #prints to console when bot starts up
 @bot.event
@@ -175,30 +177,29 @@ def getAmazonLink(number):
     return str(amazonLink)
     
 async def buildDatabase(username, channel):   
-    with open("simulations/" + username[3:len(username)-1] + ".txt", 'w+') as file:
+    async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
         async for message in bot.logs_from(channel, limit=4000):
-            if message.author.id == username[3:len(username)-1]: # and str(message.content)[0] != "!":
+            if message.author.id == username[username.index("1"):len(username)-1]: # and str(message.content)[0] != "!":
                 #print(message.content)     #somehow it breaks without these lines
                 #print(message.author.id)
                 #print(username[3:len(username)-1])
-                file.write("{}\n".format(message.content))
-    file.close()
+                await file.write("{}\n".format(message.content))
+    await file.close()
 
 def buildComment(dbFilename):
     # Get raw text as string.
     with open("simulations/" + dbFilename + ".txt") as f:
         text = f.read()
     # Build the model.
-    text_model = markovify.Text(text) 
+    text_model = markovify.NewlineText(text) 
     # Print randomly-generated sentences
     return text_model.make_sentence()
-       
+    
     
 #tests if bot is actually functioning
 @bot.command()
 async def test():
     await bot.say('Test!')
-
 
 #prints how many points the user has that issued the command
 @bot.command(pass_context=True)
@@ -400,7 +401,9 @@ async def simulate(ctx, username : str):
         channelToGetData = bot.get_channel("170682390786605057") #general
         if channelID in textChatIDlist:
             await buildDatabase(username, channelToGetData)
-            comment = buildComment(username[3:len(username)-1])
+            comment = buildComment(username[username.index("1"):len(username)-1])
+            if comment is None:
+                comment = "Sorry, I don't have enough data at the moment to simulate that user! (Or a error occured)"
             await bot.say(comment)        
 
         
