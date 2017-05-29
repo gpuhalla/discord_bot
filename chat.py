@@ -13,11 +13,6 @@ bot = ChatBot(
 
 DEFAULT_SESSION_ID = bot.default_session.id
 
-
-
-# Get a response to an input statement
-bot.get_response("Hello, how are you today?")
-
 # The following loop will execute each time the user enters input
 async def message(message):
     try:
