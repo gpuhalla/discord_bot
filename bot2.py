@@ -91,9 +91,9 @@ async def on_message(message):
     
     await bot.process_commands(message)
 
-async def messageToBot(message):
+def messageToBot(message):
     try:
-        return await chatbot.get_response(message)
+        return chatbot.get_response(message)
         
     # Press ctrl-c or ctrl-d on the keyboard to exit
     except (KeyboardInterrupt, EOFError, SystemExit):
