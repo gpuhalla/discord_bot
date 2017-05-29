@@ -25,4 +25,4 @@ async def message(message):
 		
     # Press ctrl-c or ctrl-d on the keyboard to exit
     except (KeyboardInterrupt, EOFError, SystemExit):
-        break
+        return "Debug: Bot failed to get response"
