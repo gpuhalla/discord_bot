@@ -11,11 +11,16 @@ import time
 
 #https://gist.github.com/yanofsky/5436496
 
+secretFile = open("secrets.txt","r")
+secretKey = secretFile.readlines()
+for x in range(0, len(secretKey)):
+    secretKey[x] = secretKey[x][:-1]
+    
 #Twitter API credentials
-consumer_key = ""
-consumer_secret = ""
-access_key = ""
-access_secret = ""
+consumer_key = secretKey[6]
+consumer_secret = secretKey[7]
+access_key = secretKey[8]
+access_secret = secretKey[9]
 
 textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"]
     

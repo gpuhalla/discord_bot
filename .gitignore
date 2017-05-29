@@ -8,3 +8,6 @@ shrek/
 
 *.zip
 *.bat
+
+secrets.txt
+emailLoginTextFile.txt

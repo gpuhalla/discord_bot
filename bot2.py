@@ -20,12 +20,18 @@ import tweets
 #import tone
 #import isCatgirl
 
+
+secretFile = open("secrets.txt","r")
+secretKey = secretFile.readlines()
+for x in range(0, len(secretKey)):
+    secretKey[x] = secretKey[x][:-1]
+
 logging.basicConfig(level=logging.INFO) #INFO/DEBUG
-r = praw.Reddit(client_id='',
-                     client_secret='',
-                     password='',
-                     user_agent='',
-                     username='')
+r = praw.Reddit(client_id=secretKey[1],
+                     client_secret=secretKey[2],
+                     password=secretKey[3],
+                     user_agent=secretKey[4],
+                     username=secretKey[5])
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
 c = conn.cursor()                       #sqlite communication cursor
 points_cursor = conn.cursor()           #background cursor to reduce command conflicts
@@ -332,14 +338,27 @@ async def reddit(ctx, reddit : str):
 async def fuckmarrykill(ctx):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
+        #Old functionaility
+        # await bot.say("Bachelor(ette) #1")
+        # await uploadRandomPicture("fmk", 0)
+        # await asyncio.sleep(2)
+        # await bot.say("Bachelor(ette) #2")
+        # await uploadRandomPicture("fmk", 0)
+        # await asyncio.sleep(2)
+        # await bot.say("Bachelor(ette) #3")
+        # await uploadRandomPicture("fmk", 0)
         await bot.say("Bachelor(ette) #1")
-        await uploadRandomPicture("fmk", 0)
-        await asyncio.sleep(2)
+        await getHotSubRedditImage("gentlemanboners", 25)
         await bot.say("Bachelor(ette) #2")
-        await uploadRandomPicture("fmk", 0)
-        await asyncio.sleep(2)
+        await getHotSubRedditImage("LadyBoners", 25)
         await bot.say("Bachelor(ette) #3")
-        await uploadRandomPicture("fmk", 0)
+        rngNumber = random.randint(1, 3)
+        if rngNumber == 1:
+            await getHotSubRedditImage("gentlemanboners", 25)
+        elif rngNumber == 2:
+            await getHotSubRedditImage("LadyBoners", 25)
+        else:
+            await uploadRandomPicture("fmk", 0)
     return
     
 @bot.command(pass_context=True)
@@ -403,7 +422,7 @@ async def simulate(ctx, username : str):
             await buildDatabase(username, channelToGetData)
             comment = buildComment(username[username.index("1"):len(username)-1])
             if comment is None:
-                comment = "Sorry, I don't have enough data at the moment to simulate that user! (Or a error occured)"
+                comment = "Sorry, I'm having a hard time simulating that user."
             await bot.say(comment)        
 
         
@@ -412,4 +431,4 @@ async def simulate(ctx, username : str):
 #sets up loop
 bot.loop.create_task(pointsBackgroundTask())
 #bot token for connection to the chat
-bot.run('')
+bot.run(secretKey[0])
