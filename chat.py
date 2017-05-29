@@ -16,7 +16,7 @@ DEFAULT_SESSION_ID = bot.default_session.id
 async def message(message):
     try:
         return bot.get_response(message)
-		
+        
     # Press ctrl-c or ctrl-d on the keyboard to exit
     except (KeyboardInterrupt, EOFError, SystemExit):
         return "Debug: Bot failed to get response"

@@ -79,8 +79,8 @@ async def on_message(message):
             await bot.send_message(message.channel, "Debug: Blank response")
         else:
             await bot.send_message(message.channel, botmessage)
-	
-	await bot.process_commands(message)
+    
+    await bot.process_commands(message)
 
 #checks if a table exists
 def checkTableExists(tableName):
