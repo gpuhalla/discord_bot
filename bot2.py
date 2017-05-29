@@ -7,20 +7,20 @@ import os       #folder scanning
 import praw     #reddit api
 import hashlib  #for random
 import time     #for random
-import logging
 
 import music    #music file
 import youtube_dl #for music converting
-import markovify    #for markov chains
-import aiofiles     #so the simulate writes can work
 
 #import speechRecognition #speech stuff 
+
 #import systools
+
 import tweets
+
 #import tone
+
 #import isCatgirl
 
-logging.basicConfig(level=logging.INFO) #INFO/DEBUG
 r = praw.Reddit(client_id='',
                      client_secret='',
                      password='',
@@ -48,7 +48,6 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
-
 
 #prints to console when bot starts up
 @bot.event
@@ -175,26 +174,6 @@ def getAmazonLink(number):
     amazonLink = line[start:]
 
     return str(amazonLink)
-    
-async def buildDatabase(username, channel):   
-    async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
-        async for message in bot.logs_from(channel, limit=4000):
-            if message.author.id == username[username.index("1"):len(username)-1]: # and str(message.content)[0] != "!":
-                #print(message.content)     #somehow it breaks without these lines
-                #print(message.author.id)
-                #print(username[3:len(username)-1])
-                await file.write("{}\n".format(message.content))
-    await file.close()
-
-def buildComment(dbFilename):
-    # Get raw text as string.
-    with open("simulations/" + dbFilename + ".txt") as f:
-        text = f.read()
-    # Build the model.
-    text_model = markovify.NewlineText(text) 
-    # Print randomly-generated sentences
-    return text_model.make_sentence()
-    
     
 #tests if bot is actually functioning
 @bot.command()
@@ -349,7 +328,7 @@ async def fuckmarrykill(ctx):
 		rngNumber = random.randint(1, 3)
 		if rngNumber == 1:
 			await getHotSubRedditImage("gentlemanboners", 25)
-		if rngNumber == 2:
+		elif rngNumber == 2:
 			await getHotSubRedditImage("LadyBoners", 25)
 		else:
 			await uploadRandomPicture("fmk", 0)
@@ -405,19 +384,7 @@ async def amazon(ctx): #number : int
         '''
         number = random.randint(0, 941)
         amazonLink = getAmazonLink(number)
-        await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))
-
-        
-@bot.command(pass_context=True)
-async def simulate(ctx, username : str):
-        channelID = ctx.message.channel.id
-        channelToGetData = bot.get_channel("170682390786605057") #general
-        if channelID in textChatIDlist:
-            await buildDatabase(username, channelToGetData)
-            comment = buildComment(username[username.index("1"):len(username)-1])
-            if comment is None:
-                comment = "Sorry, I don't have enough data at the moment to simulate that user! (Or a error occured)"
-            await bot.say(comment)        
+        await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))         
 
         
         
