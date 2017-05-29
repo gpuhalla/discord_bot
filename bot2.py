@@ -58,6 +58,7 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 
+
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
@@ -68,10 +69,10 @@ async def on_ready():
 
 @bot.event
 async def on_message():
-	channelID = ctx.message.channel.id
-	if channelID = 318824529478549504
-		botmessage = chat.message(ctx.message.text)
-		await bot.say(botmessage)
+    channelID = ctx.message.channel.id
+    if channelID == 318824529478549504:
+        botmessage = chat.message(ctx.message.text)
+        await bot.say(botmessage)
 
 #checks if a table exists
 def checkTableExists(tableName):
@@ -337,18 +338,18 @@ async def fuckmarrykill(ctx):
         # await bot.say("Bachelor(ette) #3")
         # await uploadRandomPicture("fmk", 0)
 
-		await bot.say("Bachelor(ette) #1")
+        await bot.say("Bachelor(ette) #1")
         await getHotSubRedditImage("gentlemanboners", 25)
-		await bot.say("Bachelor(ette) #2")
+        await bot.say("Bachelor(ette) #2")
         await getHotSubRedditImage("LadyBoners", 25)
-		await bot.say("Bachelor(ette) #3")
-		rngNumber = random.randint(1, 3)
-		if rngNumber == 1:
-			await getHotSubRedditImage("gentlemanboners", 25)
-		elif rngNumber == 2:
-			await getHotSubRedditImage("LadyBoners", 25)
-		else:
-			await uploadRandomPicture("fmk", 0)
+        await bot.say("Bachelor(ette) #3")
+        rngNumber = random.randint(1, 3)
+        if rngNumber == 1:
+            await getHotSubRedditImage("gentlemanboners", 25)
+        elif rngNumber == 2:
+            await getHotSubRedditImage("LadyBoners", 25)
+        else:
+            await uploadRandomPicture("fmk", 0)
 
     return
     
