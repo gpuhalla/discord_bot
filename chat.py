@@ -1,4 +1,5 @@
 from chatterbot import ChatBot
+import asyncio
 
 # Create a new instance of a ChatBot
 chatbot = ChatBot(
