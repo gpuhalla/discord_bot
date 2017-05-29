@@ -69,7 +69,7 @@ async def on_ready():
 async def on_message(message):
     channelID = message.channel.id
     if channelID == "318824529478549504":
-        botmessage = chat.message(ctx.message.text)
+        botmessage = chat.message(message.content)
         await bot.say(botmessage)
 
 #checks if a table exists
