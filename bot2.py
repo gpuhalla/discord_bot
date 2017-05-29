@@ -7,19 +7,21 @@ import os       #folder scanning
 import praw     #reddit api
 import hashlib  #for random
 import time     #for random
-import logging
 
 import music    #music file
 import youtube_dl #for music converting
-import markovify    #for markov chains
-import aiofiles     #so the simulate writes can work
+
+import chat #chatbot
 
 #import speechRecognition #speech stuff 
-#import systools
-import tweets
-#import tone
-#import isCatgirl
 
+#import systools
+
+import tweets
+
+#import tone
+
+#import isCatgirl
 
 secretFile = open("secrets.txt","r")
 secretKey = secretFile.readlines()
@@ -32,6 +34,7 @@ r = praw.Reddit(client_id=secretKey[1],
                      password=secretKey[3],
                      user_agent=secretKey[4],
                      username=secretKey[5])
+
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
 c = conn.cursor()                       #sqlite communication cursor
 points_cursor = conn.cursor()           #background cursor to reduce command conflicts
@@ -55,7 +58,6 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 
-
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
@@ -63,6 +65,13 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+@bot.event
+async def on_message():
+	channelID = ctx.message.channel.id
+	if channelID = 318824529478549504
+		botmessage = chat.message(ctx.message.text)
+		await bot.say(botmessage)
 
 #checks if a table exists
 def checkTableExists(tableName):
@@ -181,26 +190,6 @@ def getAmazonLink(number):
     amazonLink = line[start:]
 
     return str(amazonLink)
-    
-async def buildDatabase(username, channel):   
-    async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
-        async for message in bot.logs_from(channel, limit=4000):
-            if message.author.id == username[username.index("1"):len(username)-1]: # and str(message.content)[0] != "!":
-                #print(message.content)     #somehow it breaks without these lines
-                #print(message.author.id)
-                #print(username[3:len(username)-1])
-                await file.write("{}\n".format(message.content))
-    await file.close()
-
-def buildComment(dbFilename):
-    # Get raw text as string.
-    with open("simulations/" + dbFilename + ".txt") as f:
-        text = f.read()
-    # Build the model.
-    text_model = markovify.NewlineText(text) 
-    # Print randomly-generated sentences
-    return text_model.make_sentence()
-    
     
 #tests if bot is actually functioning
 @bot.command()
@@ -347,18 +336,20 @@ async def fuckmarrykill(ctx):
         # await asyncio.sleep(2)
         # await bot.say("Bachelor(ette) #3")
         # await uploadRandomPicture("fmk", 0)
-        await bot.say("Bachelor(ette) #1")
+
+		await bot.say("Bachelor(ette) #1")
         await getHotSubRedditImage("gentlemanboners", 25)
-        await bot.say("Bachelor(ette) #2")
+		await bot.say("Bachelor(ette) #2")
         await getHotSubRedditImage("LadyBoners", 25)
-        await bot.say("Bachelor(ette) #3")
-        rngNumber = random.randint(1, 3)
-        if rngNumber == 1:
-            await getHotSubRedditImage("gentlemanboners", 25)
-        elif rngNumber == 2:
-            await getHotSubRedditImage("LadyBoners", 25)
-        else:
-            await uploadRandomPicture("fmk", 0)
+		await bot.say("Bachelor(ette) #3")
+		rngNumber = random.randint(1, 3)
+		if rngNumber == 1:
+			await getHotSubRedditImage("gentlemanboners", 25)
+		elif rngNumber == 2:
+			await getHotSubRedditImage("LadyBoners", 25)
+		else:
+			await uploadRandomPicture("fmk", 0)
+
     return
     
 @bot.command(pass_context=True)
@@ -412,7 +403,6 @@ async def amazon(ctx): #number : int
         number = random.randint(0, 941)
         amazonLink = getAmazonLink(number)
         await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))
-
         
 @bot.command(pass_context=True)
 async def simulate(ctx, username : str):
@@ -424,7 +414,6 @@ async def simulate(ctx, username : str):
             if comment is None:
                 comment = "Sorry, I'm having a hard time simulating that user."
             await bot.say(comment)        
-
         
         
 #These need to be at the bottom
