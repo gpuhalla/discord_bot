@@ -74,7 +74,7 @@ async def on_message(message):
         return
     channelID = message.channel.id
     if channelID == "318824529478549504":
-        botmessage = asyncio.coroutine(chat.message(message.content))
+        botmessage = await asyncio.coroutine(chat.message(message.content))
         if botmessage == "":
             await bot.send_message(message.channel, "Debug: Blank response")
         else:
