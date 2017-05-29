@@ -1,7 +1,7 @@
 from chatterbot import ChatBot
 
 # Create a new instance of a ChatBot
-bot = ChatBot(
+chatbot = ChatBot(
     'Feedback Learning Bot',
     storage_adapter='chatterbot.storage.JsonFileStorageAdapter',
     logic_adapters=[
@@ -11,11 +11,11 @@ bot = ChatBot(
     output_adapter='chatterbot.output.TerminalAdapter'
 )
 
-DEFAULT_SESSION_ID = bot.default_session.id
+DEFAULT_SESSION_ID = chatbot.default_session.id
 
 async def message(message):
     try:
-        return bot.get_response(message)
+        return await chatbot.get_response(message)
         
     # Press ctrl-c or ctrl-d on the keyboard to exit
     except (KeyboardInterrupt, EOFError, SystemExit):
