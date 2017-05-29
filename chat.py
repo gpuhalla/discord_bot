@@ -21,7 +21,7 @@ bot.get_response("Hello, how are you today?")
 # The following loop will execute each time the user enters input
 async def message(message):
     try:
-        response = bot.get_response(message)
+        return bot.get_response(message)
 		
     # Press ctrl-c or ctrl-d on the keyboard to exit
     except (KeyboardInterrupt, EOFError, SystemExit):
