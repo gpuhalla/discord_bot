@@ -67,7 +67,7 @@ chatbot = ChatBot(
         'chatterbot.logic.BestMatch'
     ],
     input_adapter='chatterbot.input.TerminalAdapter',
-    output_adapter='chatterbot.output.TerminalAdapter'
+    output_adapter='chatterbot.output.TerminalAdapter')
 
 #prints to console when bot starts up
 @bot.event
