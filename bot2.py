@@ -11,6 +11,8 @@ import time     #for random
 import music    #music file
 import youtube_dl #for music converting
 
+import chat #chatbot
+
 #import speechRecognition #speech stuff 
 
 #import systools
@@ -56,6 +58,13 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+
+@bot.event
+async def on_message():
+	channelID = ctx.message.channel.id
+	if channelID = 318824529478549504
+		botmessage = chat.message(ctx.message.text)
+		await bot.say(botmessage)
 
 #checks if a table exists
 def checkTableExists(tableName):
