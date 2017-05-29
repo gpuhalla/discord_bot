@@ -15,7 +15,7 @@ import markovify    #for markov chains
 import aiofiles     #so the simulate writes can work
 
 
-import chat #chatbot
+from chatterbot import ChatBot
 
 import tweets
 
@@ -59,7 +59,23 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 
+# Create a new instance of a ChatBot
+chatbot = ChatBot(
+    'Feedback Learning Bot',
+    storage_adapter='chatterbot.storage.JsonFileStorageAdapter',
+    logic_adapters=[
+        'chatterbot.logic.BestMatch'
+    ],
+    input_adapter='chatterbot.input.TerminalAdapter',
+    output_adapter='chatterbot.output.TerminalAdapter'
 
+async def messageToBot(message):
+    try:
+        return await chatbot.get_response(message)
+        
+    # Press ctrl-c or ctrl-d on the keyboard to exit
+    except (KeyboardInterrupt, EOFError, SystemExit):
+        return "Debug: Bot failed to get response"
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
@@ -74,7 +90,7 @@ async def on_message(message):
         return
     channelID = message.channel.id
     if channelID == "318824529478549504":
-        botmessage = await chat.message(message.content)
+        botmessage = await messageToBot(message.content)
         if botmessage == "":
             await bot.send_message(message.channel, "Debug: Blank response")
         else:
