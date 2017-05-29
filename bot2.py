@@ -67,7 +67,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    channelID = ctx.message.channel.id
+    channelID = message.channel.id
     if channelID == "318824529478549504":
         botmessage = chat.message(ctx.message.text)
         await bot.say(botmessage)
