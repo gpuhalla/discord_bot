@@ -332,14 +332,27 @@ async def reddit(ctx, reddit : str):
 async def fuckmarrykill(ctx):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
-        await bot.say("Bachelor(ette) #1")
-        await uploadRandomPicture("fmk", 0)
-        await asyncio.sleep(2)
-        await bot.say("Bachelor(ette) #2")
-        await uploadRandomPicture("fmk", 0)
-        await asyncio.sleep(2)
-        await bot.say("Bachelor(ette) #3")
-        await uploadRandomPicture("fmk", 0)
+		#Old functionaility
+        # await bot.say("Bachelor(ette) #1")
+        # await uploadRandomPicture("fmk", 0)
+        # await asyncio.sleep(2)
+        # await bot.say("Bachelor(ette) #2")
+        # await uploadRandomPicture("fmk", 0)
+        # await asyncio.sleep(2)
+        # await bot.say("Bachelor(ette) #3")
+        # await uploadRandomPicture("fmk", 0)
+		await bot.say("Bachelor(ette) #1")
+        await getHotSubRedditImage("gentlemanboners", 25)
+		await bot.say("Bachelor(ette) #2")
+        await getHotSubRedditImage("LadyBoners", 25)
+		await bot.say("Bachelor(ette) #3")
+		rngNumber = random.randint(1, 3)
+		if rngNumber == 1:
+			await getHotSubRedditImage("gentlemanboners", 25)
+		if rngNumber == 2:
+			await getHotSubRedditImage("LadyBoners", 25)
+		else:
+			await uploadRandomPicture("fmk", 0)
     return
     
 @bot.command(pass_context=True)
