@@ -76,9 +76,7 @@ async def on_message(message):
         return
     channelID = message.channel.id
     if channelID == "318824529478549504":
-        await bot.send_message(message.channel, "Debug: attempting to generate response")
         botmessage = messageToBot(message.content)
-        await bot.send_message(message.channel, "Debug: attempting to send response")
         if botmessage != "":
             await bot.send_message(message.channel, botmessage)
         else:
