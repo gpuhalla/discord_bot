@@ -70,10 +70,15 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
+    if message.author.bot:
+        return
     channelID = message.channel.id
     if channelID == "318824529478549504":
         botmessage = chat.message(message.content)
-        await bot.send_message(message.channel, botmessage)
+        if botmessage == ""
+            await bot.send_message(message.channel, "Debug: Blank response")
+        else:
+            await bot.send_message(message.channel, botmessage)
 	
 	await bot.process_commands(message)
 

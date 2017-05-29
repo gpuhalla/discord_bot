@@ -13,8 +13,7 @@ bot = ChatBot(
 
 DEFAULT_SESSION_ID = bot.default_session.id
 
-# The following loop will execute each time the user enters input
-def message(message):
+async def message(message):
     try:
         return bot.get_response(message)
 		
