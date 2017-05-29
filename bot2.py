@@ -11,6 +11,9 @@ import logging
 
 import music    #music file
 import youtube_dl #for music converting
+import markovify    #for markov chains
+import aiofiles     #so the simulate writes can work
+
 
 import chat #chatbot
 
@@ -56,7 +59,6 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 
-client = discord.Client()
 
 #prints to console when bot starts up
 @bot.event
@@ -66,12 +68,12 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-@client.event
+@bot.event
 async def on_message(message):
     channelID = message.channel.id
     if channelID == "318824529478549504":
         botmessage = chat.message(message.content)
-        await client.send_message(message.channel, botmessage)
+        await bot.send_message(message.channel, botmessage)
 
 #checks if a table exists
 def checkTableExists(tableName):
@@ -190,6 +192,25 @@ def getAmazonLink(number):
     amazonLink = line[start:]
 
     return str(amazonLink)
+    
+async def buildDatabase(username, channel):   
+    async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
+        async for message in bot.logs_from(channel, limit=4000):
+            if message.author.id == username[username.index("1"):len(username)-1]: # and str(message.content)[0] != "!":
+                #print(message.content)     #somehow it breaks without these lines
+                #print(message.author.id)
+                #print(username[3:len(username)-1])
+                await file.write("{}\n".format(message.content))
+    await file.close()
+
+def buildComment(dbFilename):
+    # Get raw text as string.
+    with open("simulations/" + dbFilename + ".txt") as f:
+        text = f.read()
+    # Build the model.
+    text_model = markovify.NewlineText(text) 
+    # Print randomly-generated sentences
+    return text_model.make_sentence()
     
 #tests if bot is actually functioning
 @bot.command()
