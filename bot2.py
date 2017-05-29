@@ -14,7 +14,6 @@ import youtube_dl #for music converting
 import markovify    #for markov chains
 import aiofiles     #so the simulate writes can work
 
-
 import chat #chatbot
 
 import tweets
@@ -74,8 +73,8 @@ async def on_message(message):
     if channelID == "318824529478549504":
         botmessage = chat.message(message.content)
         await bot.send_message(message.channel, botmessage)
-	
-	await bot.process_commands(message)
+    
+    await bot.process_commands(message)
 
 #checks if a table exists
 def checkTableExists(tableName):
