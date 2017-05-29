@@ -74,6 +74,7 @@ async def on_message():
         botmessage = chat.message(ctx.message.text)
         await bot.say(botmessage)
 
+
 #checks if a table exists
 def checkTableExists(tableName):
     c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", (tableName, ))
