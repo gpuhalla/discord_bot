@@ -56,6 +56,7 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 
+client = discord.Client()
 
 #prints to console when bot starts up
 @bot.event
@@ -65,12 +66,12 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-@bot.event
+@client.event
 async def on_message(message):
     channelID = message.channel.id
     if channelID == "318824529478549504":
         botmessage = chat.message(message.content)
-        await bot.say(botmessage)
+        await client.send_message(message.channel, botmessage)
 
 #checks if a table exists
 def checkTableExists(tableName):
