@@ -14,14 +14,11 @@ import youtube_dl #for music converting
 
 import chat #chatbot
 
-#import speechRecognition #speech stuff 
-
-#import systools
-
 import tweets
 
+#import speechRecognition #speech stuff 
+#import systools
 #import tone
-
 #import isCatgirl
 
 secretFile = open("secrets.txt","r")
@@ -74,7 +71,6 @@ async def on_message(message):
     if channelID == "318824529478549504":
         botmessage = chat.message(ctx.message.text)
         await bot.say(botmessage)
-
 
 #checks if a table exists
 def checkTableExists(tableName):
