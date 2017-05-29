@@ -7,6 +7,7 @@ import os       #folder scanning
 import praw     #reddit api
 import hashlib  #for random
 import time     #for random
+import logging
 
 import music    #music file
 import youtube_dl #for music converting
