@@ -69,13 +69,6 @@ chatbot = ChatBot(
     input_adapter='chatterbot.input.TerminalAdapter',
     output_adapter='chatterbot.output.TerminalAdapter'
 
-async def messageToBot(message):
-    try:
-        return await chatbot.get_response(message)
-        
-    # Press ctrl-c or ctrl-d on the keyboard to exit
-    except (KeyboardInterrupt, EOFError, SystemExit):
-        return "Debug: Bot failed to get response"
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
@@ -97,6 +90,14 @@ async def on_message(message):
             await bot.send_message(message.channel, botmessage)
     
     await bot.process_commands(message)
+
+async def messageToBot(message):
+    try:
+        return await chatbot.get_response(message)
+        
+    # Press ctrl-c or ctrl-d on the keyboard to exit
+    except (KeyboardInterrupt, EOFError, SystemExit):
+        return "Debug: Bot failed to get response"
 
 #checks if a table exists
 def checkTableExists(tableName):
