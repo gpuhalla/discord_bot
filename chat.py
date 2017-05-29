@@ -13,7 +13,7 @@ chatbot = ChatBot(
 
 DEFAULT_SESSION_ID = chatbot.default_session.id
 
-async def message(message):
+def message(message):
     try:
         return chatbot.get_response(message)
         
