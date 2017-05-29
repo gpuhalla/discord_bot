@@ -60,14 +60,7 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 
 # Create a new instance of a ChatBot
-chatbot = ChatBot(
-    'Feedback Learning Bot',
-    storage_adapter='chatterbot.storage.JsonFileStorageAdapter',
-    logic_adapters=[
-        'chatterbot.logic.BestMatch'
-    ],
-    input_adapter='chatterbot.input.TerminalAdapter',
-    output_adapter='chatterbot.output.TerminalAdapter')
+chatbot = ChatBot('DaisyBot')
 
 #prints to console when bot starts up
 @bot.event
