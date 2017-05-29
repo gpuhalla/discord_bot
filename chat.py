@@ -15,7 +15,7 @@ DEFAULT_SESSION_ID = chatbot.default_session.id
 
 async def message(message):
     try:
-        return await chatbot.get_response(message)
+        return async chatbot.get_response(message)
         
     # Press ctrl-c or ctrl-d on the keyboard to exit
     except (KeyboardInterrupt, EOFError, SystemExit):
