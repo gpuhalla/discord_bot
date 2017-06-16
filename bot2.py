@@ -404,6 +404,8 @@ async def dance(ctx):
             await asyncio.sleep(.75)
             await bot.edit_message(messageToEdit, "（〜^∇^)〜")
             await asyncio.sleep(.75)
+            await bot.edit_message(messageToEdit, "~( •ᴗ•)~")
+            await asyncio.sleep(.75)
             await bot.edit_message(messageToEdit, "└(=^‥^=)┐")
     return
                      
