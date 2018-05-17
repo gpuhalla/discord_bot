@@ -1,13 +1,25 @@
 __pycache__/
-catgirl2/
+
+#Pic folders
+isCatgirlTraining/
 CatgirlDB/
 fmk/
 husbandodb/
-Portable Bot Archive/
 shrek/
 
+#Backup storage folder
+Portable Bot Archive/
+
+#zip picture archives
 *.zip
+
+#bat files to run bots
 *.bat
 
+#Files containing keys
 secrets.txt
-emailLoginTextFile.txt
+Old bots/oldBLANbotKeys.txt
+Retired Commands/systools/emailLoginTextFile.txt
+
+#Botchat conversation database
+database.db

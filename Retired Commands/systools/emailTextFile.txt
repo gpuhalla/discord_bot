@@ -1,0 +1,2 @@
+A remote shutdown action has been called in the Discord. To allow this action to execute, please enter the following code on your next message.
+118055
