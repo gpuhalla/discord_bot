@@ -56,7 +56,7 @@ def get_all_tweets(screen_name):
     
     tweetText = str(pickedTweet[1])
     #print(tweetText)
-    tweetText.replace('\\n', '\n')
+    tweetText = tweetText.replace('\\n', '\n')
     #print(tweetText)
     
     formattedTweet = "Twitter: @" + screen_name + "\n" + date_str + "\n" + tweetText[2: len(tweetText)-1]

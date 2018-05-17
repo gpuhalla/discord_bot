@@ -7,41 +7,31 @@ import os       #folder scanning
 import praw     #reddit api
 import hashlib  #for random
 import time     #for random
-import logging
 
 import music    #music file
 import youtube_dl #for music converting
-import markovify    #for markov chains
-import aiofiles     #so the simulate writes can work
 
+#import speechRecognition #speech stuff 
 
-from chatterbot import ChatBot
+import systools
 
 import tweets
 
-#import speechRecognition #speech stuff 
-#import systools
-#import tone
-#import isCatgirl
+import tone
 
-secretFile = open("secrets.txt","r")
-secretKey = secretFile.readlines()
-for x in range(0, len(secretKey)):
-    secretKey[x] = secretKey[x][:-1]
+import isCatgirl
 
-logging.basicConfig(level=logging.INFO) #INFO/DEBUG
-r = praw.Reddit(client_id=secretKey[1],
-                     client_secret=secretKey[2],
-                     password=secretKey[3],
-                     user_agent=secretKey[4],
-                     username=secretKey[5])
-
+r = praw.Reddit(client_id='',
+                     client_secret='',
+                     password='',
+                     user_agent='',
+                     username='')
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
 c = conn.cursor()                       #sqlite communication cursor
 points_cursor = conn.cursor()           #background cursor to reduce command conflicts
 masterDBList = {}                       #List of folders in the same directory as the bot
 bonusDBList = {}                        #List of nested bonus folders
-textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] 
+textChatIDlist = ["227203270186106890", "222886725288984576", "218047094835904512", "227209642701357056"] #funzone id, staff id, admin id, bot_development id
 
 #a whole bunch of nonsense to get somewhat better random values
 timeCounter = str(time.time())
@@ -54,13 +44,10 @@ bot = commands.Bot(command_prefix='!', description='The official BuckeyeLAN bot'
 #add music functionaility from file
 bot.add_cog(music.Music(bot))
 #bot.add_cog(speechRecognition.Speech(bot)) 
-#bot.add_cog(systools.SysTools(bot))
+bot.add_cog(systools.SysTools(bot))
 bot.add_cog(tweets.Twitter(bot))
-#bot.add_cog(tone.Tone(bot))
-#bot.add_cog(isCatgirl.isCatgirl(bot))
-
-# Create a new instance of a ChatBot
-chatbot = ChatBot('DaisyBot')
+bot.add_cog(tone.Tone(bot))
+bot.add_cog(isCatgirl.isCatgirl(bot))
 
 #prints to console when bot starts up
 @bot.event
@@ -69,28 +56,6 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-    channelID = message.channel.id
-    if channelID == "318824529478549504":
-        botmessage = messageToBot(message.content)
-        if botmessage != "":
-            await bot.send_message(message.channel, botmessage)
-        else:
-            await bot.send_message(message.channel, "Debug: Blank response")
-    
-    await bot.process_commands(message)
-
-def messageToBot(message):
-    try:
-        return chatbot.get_response(message)
-        
-    # Press ctrl-c or ctrl-d on the keyboard to exit
-    except (KeyboardInterrupt, EOFError, SystemExit):
-        return "Debug: Bot failed to get response"
 
 #checks if a table exists
 def checkTableExists(tableName):
@@ -198,36 +163,7 @@ async def getHotSubRedditImage(subreddit, numHot):
     subrngNumber = random.randint(0, numHot - 1)
     #picks a random url from the array
     await bot.say(urlArray[subrngNumber])
-    return 
-
-def getAmazonLink(number):
-    f = open("amazonlist.txt","r")
-    lines = f.readlines()
-    line = lines[number]
-    start = line.index('h')
-    #print(line)
-    amazonLink = line[start:]
-
-    return str(amazonLink)
-    
-async def buildDatabase(username, channel):   
-    async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
-        async for message in bot.logs_from(channel, limit=4000):
-            if message.author.id == username[username.index("1"):len(username)-1]: # and str(message.content)[0] != "!":
-                #print(message.content)     #somehow it breaks without these lines
-                #print(message.author.id)
-                #print(username[3:len(username)-1])
-                await file.write("{}\n".format(message.content))
-    await file.close()
-
-def buildComment(dbFilename):
-    # Get raw text as string.
-    with open("simulations/" + dbFilename + ".txt") as f:
-        text = f.read()
-    # Build the model.
-    text_model = markovify.NewlineText(text) 
-    # Print randomly-generated sentences
-    return text_model.make_sentence()
+    return  
     
 #tests if bot is actually functioning
 @bot.command()
@@ -352,42 +288,20 @@ async def scute(ctx):
     #print(channelID) debug to find channel id
     if channelID in textChatIDlist:
         await getHotSubRedditImage("awwnime", 25)
-    return
-
-@bot.command(pass_context=True)
-async def reddit(ctx, reddit : str):
-    channelID = ctx.message.channel.id
-    if channelID in textChatIDlist:
-        await getHotSubRedditImage(reddit, 25)
-    return      
+    return  
 
 @bot.command(pass_context=True)
 async def fuckmarrykill(ctx):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
-        #Old functionaility
-        # await bot.say("Bachelor(ette) #1")
-        # await uploadRandomPicture("fmk", 0)
-        # await asyncio.sleep(2)
-        # await bot.say("Bachelor(ette) #2")
-        # await uploadRandomPicture("fmk", 0)
-        # await asyncio.sleep(2)
-        # await bot.say("Bachelor(ette) #3")
-        # await uploadRandomPicture("fmk", 0)
-
         await bot.say("Bachelor(ette) #1")
-        await getHotSubRedditImage("gentlemanboners", 25)
+        await uploadRandomPicture("fmk", 0)
+        await asyncio.sleep(2)
         await bot.say("Bachelor(ette) #2")
-        await getHotSubRedditImage("LadyBoners", 25)
+        await uploadRandomPicture("fmk", 0)
+        await asyncio.sleep(2)
         await bot.say("Bachelor(ette) #3")
-        rngNumber = random.randint(1, 3)
-        if rngNumber == 1:
-            await getHotSubRedditImage("gentlemanboners", 25)
-        elif rngNumber == 2:
-            await getHotSubRedditImage("LadyBoners", 25)
-        else:
-            await uploadRandomPicture("fmk", 0)
-
+        await uploadRandomPicture("fmk", 0)
     return
     
 @bot.command(pass_context=True)
@@ -404,10 +318,9 @@ async def dance(ctx):
             await asyncio.sleep(.75)
             await bot.edit_message(messageToEdit, "（〜^∇^)〜")
             await asyncio.sleep(.75)
-            await bot.edit_message(messageToEdit, "~( •ᴗ•)~")
-            await asyncio.sleep(.75)
             await bot.edit_message(messageToEdit, "└(=^‥^=)┐")
     return
+    
                      
 @bot.command(pass_context=True)
 async def spell(ctx, message : str):
@@ -427,37 +340,24 @@ async def why(ctx):
     if channelID in textChatIDlist:
          await bot.say("why not?")
          
-@bot.command(pass_context=True)
-async def amazon(ctx): #number : int
-    channelID = ctx.message.channel.id
-    if channelID in textChatIDlist:
-        #can't check for nonexistant arguements in commands extension?
-        '''
-        if number == "":
-            number = random.randint(0, 941)
-        elif number < 0:
-            number = 0
-        elif number > 941:
-            number  = 941
-        '''
-        number = random.randint(0, 941)
-        amazonLink = getAmazonLink(number)
-        await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))
-        
-@bot.command(pass_context=True)
-async def simulate(ctx, username : str):
-        channelID = ctx.message.channel.id
-        channelToGetData = bot.get_channel("170682390786605057") #general
-        if channelID in textChatIDlist:
-            await buildDatabase(username, channelToGetData)
-            comment = buildComment(username[username.index("1"):len(username)-1])
-            if comment is None:
-                comment = "Sorry, I'm having a hard time simulating that user."
-            await bot.say(comment)        
-        
-        
+#@bot.command(pass_context=True)
+#async def givegerrypoints(ctx, ammt : int):
+#    channelID = ctx.message.channel.id
+#    if channelID in textChatIDlist:
+#        await addPoints("147867330917957633", ammt)
+#        await bot.say("aye aye captain!")
+
+#@bot.command(pass_context=True)
+#async def help(ctx):
+#   channelID = ctx.message.channel.id
+#   if channelID in textChatIDlist:
+#       await bot.say("Commands:\n!points\n!leaderboard\n!roulette #\n!quote!addquote quote name\n!catgirl\n!shrek\n!husbando\n!scute\n!fuckmarrykill")
+#   else:
+#       await bot.say("Commands:\n!points\n!leaderboard\n!roulette #\n!quote")
+#   return
+
 #These need to be at the bottom
 #sets up loop
 bot.loop.create_task(pointsBackgroundTask())
 #bot token for connection to the chat
-bot.run(secretKey[0])
+bot.run('')
