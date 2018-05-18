@@ -13,10 +13,13 @@ import logging
 import music    #music file
 import youtube_dl #for music converting
 
-import tweets
+import tweets   #tweets
 
 import markovify    #for markov chains
 import aiofiles     #so the simulate writes can work
+
+from watson_developer_cloud import ToneAnalyzerV3    #tone reactions
+import json
 
 from chatterbot import ChatBot     #Lucas' chat stuff
 
@@ -42,7 +45,7 @@ c = conn.cursor()                       #sqlite communication cursor
 points_cursor = conn.cursor()           #background cursor to reduce command conflicts
 masterDBList = {}                       #List of folders in the same directory as the bot
 bonusDBList = {}                        #List of nested bonus folders
-textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] 
+textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] #general, dev, nsf, other
 
 #a whole bunch of nonsense to get somewhat better random values
 timeCounter = str(time.time())
@@ -63,6 +66,10 @@ bot.add_cog(tweets.Twitter(bot))
 # Create a new instance of a ChatBot
 chatbot = ChatBot('DaisyBot')
 
+#globals for switching tones on/off
+toneSwitch = False
+emojis = []
+    
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
@@ -76,15 +83,22 @@ async def on_message(message):
     if message.author.bot:
         return
     channelID = message.channel.id
+    #bot_chat stuff
     if channelID == "318824529478549504":
         botmessage = messageToBot(message.content)
         if botmessage != "":
             await bot.send_message(message.channel, botmessage)
         else:
             await bot.send_message(message.channel, "Debug: Blank response")
+    #tone reaction stuff
+    elif channelID in ["170682390786605057", "302137557896921089"] and toneSwitch and message.content[0] != "!":
+        global emojis
+        toneList = get_tone(message.content)
+        await reactWithTones(emojis, message, toneList)
     
     await bot.process_commands(message)
 
+    
 def messageToBot(message):
     try:
         return chatbot.get_response(message)
@@ -210,7 +224,8 @@ def getAmazonLink(number):
     amazonLink = line[start:]
 
     return str(amazonLink)
-    
+
+#Markov chains    
 async def buildDatabase(username, channel):   
     async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
         async for message in bot.logs_from(channel, limit=4000):
@@ -221,6 +236,7 @@ async def buildDatabase(username, channel):
                 await file.write("{}\n".format(message.content))
     await file.close()
 
+#Markov chains    
 def buildComment(dbFilename):
     # Get raw text as string.
     with open("simulations/" + dbFilename + ".txt") as f:
@@ -230,6 +246,32 @@ def buildComment(dbFilename):
     # Print randomly-generated sentences
     return text_model.make_sentence()
     
+def get_tone(toneString):
+    tone_analyzer = ToneAnalyzerV3(
+        username=secretKey[10],
+        password=secretKey[11],
+        version='2017-09-21')
+
+    preTones = json.dumps(tone_analyzer.tone({"text": toneString}, "text/plain"), indent=2)
+    tones = json.loads(preTones)
+    #print(tones)
+
+    toneList = []
+    for tone in range(0,len(tones["document_tone"]["tones"])):
+        toneList.append(tones["document_tone"]["tones"][tone]["tone_name"])
+
+    return toneList
+    
+async def reactWithTones(emojis, message, toneList):
+    #print(emojis)
+    for tone in toneList:
+        for emoji in emojis:
+            if tone == emoji.name:
+                await bot.add_reaction(message, emoji)
+                break
+            #print("no more than 6")
+
+            
 #tests if bot is actually functioning
 @bot.command()
 async def test():
@@ -432,15 +474,6 @@ async def why(ctx):
 async def amazon(ctx): #number : int
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
-        #can't check for nonexistent arguments in commands extension?
-        '''
-        if number == "":
-            number = random.randint(0, 941)
-        elif number < 0:
-            number = 0
-        elif number > 941:
-            number  = 941
-        '''
         number = random.randint(0, 941)
         amazonLink = getAmazonLink(number)
         await bot.say("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))
@@ -454,7 +487,23 @@ async def simulate(ctx, username : str):
             comment = buildComment(username[username.index("1"):len(username)-1])
             if comment is None:
                 comment = "Sorry, I'm having a hard time simulating that user."
-            await bot.say(comment)        
+            await bot.say(comment)
+
+@bot.command(pass_context=True)
+async def tones(ctx, switchArg):
+    channelID = ctx.message.channel.id
+    if channelID in textChatIDlist:
+        global emojis, toneSwitch
+        emojiList = ["Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative"]
+        for emoji in emojiList:
+            emojis.append(discord.utils.get(bot.get_all_emojis(), name=emoji))
+        #print(emojis)
+        if switchArg == "off":
+            toneSwitch = False
+            await bot.say("Tone analysis is Off")
+        elif switchArg == "on":
+            toneSwitch = True 
+            await bot.say("Tone analysis is On")            
         
         
 #These need to be at the bottom
