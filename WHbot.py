@@ -18,8 +18,9 @@ import tweets   #tweets
 import markovify    #for markov chains
 import aiofiles     #so the simulate writes can work
 
-from watson_developer_cloud import ToneAnalyzerV3    #tone reactions
+from watson_developer_cloud import ToneAnalyzerV3, PersonalityInsightsV3    #tone reactions
 import json
+import personality
 
 from chatterbot import ChatBot     #Lucas' chat stuff
 
@@ -62,6 +63,7 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
+bot.add_cog(personality.Personality(bot))
 
 # Create a new instance of a ChatBot
 chatbot = ChatBot('DaisyBot')
@@ -226,20 +228,31 @@ def getAmazonLink(number):
     return str(amazonLink)
 
 #Markov chains    
-async def buildDatabase(username, channel):   
-    async with aiofiles.open("simulations/" + username[username.index("1"):len(username)-1] + ".txt", 'w+') as file:
-        async for message in bot.logs_from(channel, limit=4000):
-            if message.author.id == username[username.index("1"):len(username)-1]: # and str(message.content)[0] != "!":
-                #print(message.content)     #somehow it breaks without these lines
-                #print(message.author.id)
-                #print(username[3:len(username)-1])
-                await file.write("{}\n".format(message.content))
-    await file.close()
-
+async def buildDatabase(username, channel):
+    if os.path.exists("MessageLogs/" + username + ".txt"):
+        if os.path.getmtime("MessageLogs/" + username + ".txt") < time.time() - 86400: #if a db is more than 1 day old
+            async with aiofiles.open("MessageLogs/" + username + ".txt", 'w+') as file:
+                async for message in bot.logs_from(channel, limit=4000):
+                    if message.author.id == username: # and str(message.content)[0] != "!":
+                        #print(message.content)     #somehow it breaks without these lines
+                        #print(message.author.id)
+                        #print(username[3:len(username)-1])
+                        await file.write("{}\n".format(message.content))
+            await file.close()
+    else:
+        async with aiofiles.open("MessageLogs/" + username + ".txt", 'w+') as file:
+            async for message in bot.logs_from(channel, limit=4000):
+                if message.author.id == username: # and str(message.content)[0] != "!":
+                    #print(message.content)     #somehow it breaks without these lines
+                    #print(message.author.id)
+                    #print(username[3:len(username)-1])
+                    await file.write("{}\n".format(message.content))
+            await file.close()
+            
 #Markov chains    
 def buildComment(dbFilename):
     # Get raw text as string.
-    with open("simulations/" + dbFilename + ".txt") as f:
+    with open("MessageLogs/" + dbFilename + ".txt") as f:
         text = f.read()
     # Build the model.
     text_model = markovify.NewlineText(text) 
@@ -251,6 +264,7 @@ def get_tone(toneString):
         username=secretKey[10],
         password=secretKey[11],
         version='2017-09-21')
+    tone_analyzer.set_default_headers({'x-watson-learning-opt-out': "true"})
 
     preTones = json.dumps(tone_analyzer.tone({"text": toneString}, "text/plain"), indent=2)
     tones = json.loads(preTones)
@@ -482,6 +496,7 @@ async def amazon(ctx): #number : int
 async def simulate(ctx, username : str):
         channelID = ctx.message.channel.id
         channelToGetData = bot.get_channel("170682390786605057") #general
+        username = username.strip("<>@!")
         if channelID in textChatIDlist:
             await buildDatabase(username, channelToGetData)
             comment = buildComment(username[username.index("1"):len(username)-1])
@@ -490,7 +505,7 @@ async def simulate(ctx, username : str):
             await bot.say(comment)
 
 @bot.command(pass_context=True)
-async def tones(ctx, switchArg):
+async def tones(ctx, switchArg : str):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
         global emojis, toneSwitch
@@ -503,7 +518,24 @@ async def tones(ctx, switchArg):
             await bot.say("Tone analysis is Off")
         elif switchArg == "on":
             toneSwitch = True 
-            await bot.say("Tone analysis is On")            
+            await bot.say("Tone analysis is On")
+
+@bot.command(pass_context=True)
+async def analyze(ctx, username : str):
+    channelID = ctx.message.channel.id
+    channelToGetData = bot.get_channel("170682390786605057") #always General
+    username = username.strip("<>@!")
+    if channelID in textChatIDlist:
+        await buildDatabase(username, channelToGetData)
+        message = personality.Personality.getPersonalityJSON(username)
+        partOneMark = message.index("Purchasing Preferences")
+        partTwoMark = message.index("Movie Preferences")
+        #print(message[:partOneMark])
+        #2 for the discord __ (underline) formatting
+        await bot.say(message[:partOneMark-2])
+        await bot.say(message[partOneMark-2:partTwoMark-2])
+        await bot.say(message[partTwoMark-2:])
+        #await bot.say("Gerry hasn't finished this yet")
         
         
 #These need to be at the bottom

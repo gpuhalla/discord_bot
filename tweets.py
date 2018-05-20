@@ -67,7 +67,6 @@ def get_all_tweets(screen_name):
     return str(formattedTweet)
     
 class Twitter:
-
     
     def __init__(self, bot):
         self.bot = bot
