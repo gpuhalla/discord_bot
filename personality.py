@@ -77,13 +77,7 @@ def prettyMessage(filename):
 class Personality:
     
     def __init__(self, bot):
-        self.bot = bot
-
-    @commands.command(pass_context=True)
-    async def personality(self, ctx):
-        channelID = ctx.message.channel.id
-        if channelID in textChatIDlist:
-            pass         
+        self.bot = bot 
             
     def getPersonalityJSON(filename):
         if os.path.exists("Personalities/" + filename + ".txt"):
@@ -108,4 +102,4 @@ class Personality:
                 file.close()
                 
         finalMessage = prettyMessage(filename)
-        return finalMessage
+        return finalMessage        

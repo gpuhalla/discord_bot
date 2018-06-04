@@ -8,7 +8,8 @@ import os       #folder scanning
 import praw     #reddit api
 import hashlib  #for random
 import time     #for random
-import logging
+import logging  #logs
+import json
 
 import music    #music file
 import youtube_dl #for music converting
@@ -19,8 +20,10 @@ import markovify    #for markov chains
 import aiofiles     #so the simulate writes can work
 
 from watson_developer_cloud import ToneAnalyzerV3, PersonalityInsightsV3    #tone reactions
-import json
+import toneReactions
 import personality
+
+import phone
 
 from chatterbot import ChatBot     #Lucas' chat stuff
 
@@ -63,15 +66,13 @@ bot.add_cog(music.Music(bot))
 bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(tone.Tone(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
+bot.add_cog(toneReactions.ToneReacts(bot))
 bot.add_cog(personality.Personality(bot))
+bot.add_cog(phone.Phone(bot))
 
 # Create a new instance of a ChatBot
 chatbot = ChatBot('DaisyBot')
 
-#globals for switching tones on/off
-toneSwitch = False
-emojis = []
-    
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
@@ -92,12 +93,13 @@ async def on_message(message):
             await bot.send_message(message.channel, botmessage)
         else:
             await bot.send_message(message.channel, "Debug: Blank response")
+    #Json storage for phone
+    elif channelID == "302137557896921089":
+        await phone.manageMessageStore(message)
     #tone reaction stuff
-    elif channelID in ["170682390786605057", "302137557896921089"] and toneSwitch and message.content[0] != "!":
-        global emojis
-        toneList = get_tone(message.content)
-        await reactWithTones(emojis, message, toneList)
-    
+    if channelID in ["170682390786605057", "302137557896921089"] and message.content[0] != "!":
+        await toneReactions.processReactions(bot, message)
+
     await bot.process_commands(message)
 
     
@@ -258,32 +260,6 @@ def buildComment(dbFilename):
     text_model = markovify.NewlineText(text) 
     # Print randomly-generated sentences
     return text_model.make_sentence()
-    
-def get_tone(toneString):
-    tone_analyzer = ToneAnalyzerV3(
-        username=secretKey[10],
-        password=secretKey[11],
-        version='2017-09-21')
-    tone_analyzer.set_default_headers({'x-watson-learning-opt-out': "true"})
-
-    preTones = json.dumps(tone_analyzer.tone({"text": toneString}, "text/plain"), indent=2)
-    tones = json.loads(preTones)
-    #print(tones)
-
-    toneList = []
-    for tone in range(0,len(tones["document_tone"]["tones"])):
-        toneList.append(tones["document_tone"]["tones"][tone]["tone_name"])
-
-    return toneList
-    
-async def reactWithTones(emojis, message, toneList):
-    #print(emojis)
-    for tone in toneList:
-        for emoji in emojis:
-            if tone == emoji.name:
-                await bot.add_reaction(message, emoji)
-                break
-            #print("no more than 6")
 
             
 #tests if bot is actually functioning
@@ -505,22 +481,6 @@ async def simulate(ctx, username : str):
             await bot.say(comment)
 
 @bot.command(pass_context=True)
-async def tones(ctx, switchArg : str):
-    channelID = ctx.message.channel.id
-    if channelID in textChatIDlist:
-        global emojis, toneSwitch
-        emojiList = ["Anger", "Fear", "Joy", "Sadness", "Analytical", "Confident", "Tentative"]
-        for emoji in emojiList:
-            emojis.append(discord.utils.get(bot.get_all_emojis(), name=emoji))
-        #print(emojis)
-        if switchArg == "off":
-            toneSwitch = False
-            await bot.say("Tone analysis is Off")
-        elif switchArg == "on":
-            toneSwitch = True 
-            await bot.say("Tone analysis is On")
-
-@bot.command(pass_context=True)
 async def analyze(ctx, username : str):
     channelID = ctx.message.channel.id
     channelToGetData = bot.get_channel("170682390786605057") #always General
@@ -530,13 +490,10 @@ async def analyze(ctx, username : str):
         message = personality.Personality.getPersonalityJSON(username)
         partOneMark = message.index("Purchasing Preferences")
         partTwoMark = message.index("Movie Preferences")
-        #print(message[:partOneMark])
-        #2 for the discord __ (underline) formatting
+        #-2 for discord __ underline formatting
         await bot.say(message[:partOneMark-2])
         await bot.say(message[partOneMark-2:partTwoMark-2])
         await bot.say(message[partTwoMark-2:])
-        #await bot.say("Gerry hasn't finished this yet")
-        
         
 #These need to be at the bottom
 #sets up loop
