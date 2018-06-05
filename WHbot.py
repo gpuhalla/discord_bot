@@ -23,7 +23,8 @@ from watson_developer_cloud import ToneAnalyzerV3, PersonalityInsightsV3    #ton
 import toneReactions
 import personality
 
-import phone
+import phoneCall
+from subprocess import Popen
 
 from chatterbot import ChatBot     #Lucas' chat stuff
 
@@ -68,7 +69,7 @@ bot.add_cog(tweets.Twitter(bot))
 #bot.add_cog(isCatgirl.isCatgirl(bot))
 bot.add_cog(toneReactions.ToneReacts(bot))
 bot.add_cog(personality.Personality(bot))
-bot.add_cog(phone.Phone(bot))
+bot.add_cog(phoneCall.Phone(bot))
 
 # Create a new instance of a ChatBot
 chatbot = ChatBot('DaisyBot')
@@ -94,10 +95,11 @@ async def on_message(message):
         else:
             await bot.send_message(message.channel, "Debug: Blank response")
     #Json storage for phone
-    elif channelID == "302137557896921089":
-        await phone.manageMessageStore(message)
+    elif channelID == "170682390786605057":
+        await phoneCall.manageMessageStore(message)
+
     #tone reaction stuff
-    if channelID in ["170682390786605057", "302137557896921089"] and message.content[0] != "!":
+    if channelID in ["170682390786605057", "302137557896921089"]:# and message.content[0] != "!": #could be no content
         await toneReactions.processReactions(bot, message)
 
     await bot.process_commands(message)
@@ -498,5 +500,8 @@ async def analyze(ctx, username : str):
 #These need to be at the bottom
 #sets up loop
 bot.loop.create_task(pointsBackgroundTask())
+bot.loop.create_task(phoneCall.checkPhoneMsg(bot))
+#Dirty way that works
+Popen(["python3", "phone/answer_call.py"])
 #bot token for connection to the chat
 bot.run(secretKey[0])

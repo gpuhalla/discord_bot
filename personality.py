@@ -21,7 +21,6 @@ personality_insights.set_default_headers({'x-watson-learning-opt-out': "true"})
 def prettyMessage(filename):
     with open("Personalities/" + filename + ".txt", 'r') as file:
         profileData = json.load(file)
-        file.close()
         
     wordCount = str(profileData["word_count"])
     
@@ -89,17 +88,14 @@ class Personality:
                     proFile.close()
                 with open("Personalities/" + filename + ".txt", 'w+') as file:
                     file.write(json.dumps(profile, indent=2))
-                    file.close()
 
         else: #file doesn't exist, create
             with open("MessageLogs/" + filename + ".txt") as proFile:
                 profile = personality_insights.profile(
                     proFile.read(), content_type='text/plain',
                     raw_scores=True, consumption_preferences=True)
-                proFile.close()
             with open("Personalities/" + filename + ".txt", 'w+') as file:
                 file.write(json.dumps(profile, indent=2))
-                file.close()
                 
         finalMessage = prettyMessage(filename)
         return finalMessage        
