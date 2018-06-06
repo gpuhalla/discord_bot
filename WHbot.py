@@ -502,6 +502,6 @@ async def analyze(ctx, username : str):
 bot.loop.create_task(pointsBackgroundTask())
 bot.loop.create_task(phoneCall.checkPhoneMsg(bot))
 #Dirty way that works
-Popen(["python3", "phone/answer_call.py"])
+Popen(["python3", "answer_call.py"])
 #bot token for connection to the chat
 bot.run(secretKey[0])

@@ -91,10 +91,10 @@ def discord_msgs():
                     if not (msgData[data]["time"]["month"] == date.month and msgData[data]["time"]["day"] == date.day):
                         resp.say("On " + str(msgData[data]["time"]["month"]) + " " + str(msgData[data]["time"]["day"]) 
                             + " at " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
-                            + " user " + msgData[data]["user"] + " said " + msgData[data]["content"] + "\n", voice='alice')
+                            + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n", voice='alice')
                     else:
                         resp.say("At " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
-                            + " user " + msgData[data]["user"] + " said " + msgData[data]["content"] + "\n", voice='alice')
+                            + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n", voice='alice')
             resp.say("End of Messages.", voice='alice')
             resp.redirect('/main_menu')
             
