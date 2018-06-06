@@ -29,7 +29,8 @@ def get_tone(toneString):
 
     toneList = []
     for tone in range(0,len(tones["document_tone"]["tones"])):
-        toneList.append(tones["document_tone"]["tones"][tone]["tone_name"])
+        if tones["document_tone"]["tones"][tone]["score"] >= 0.9:
+            toneList.append(tones["document_tone"]["tones"][tone]["tone_name"])
 
     return toneList
     

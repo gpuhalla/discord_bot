@@ -123,7 +123,7 @@ def msg_post_content():
         message = request.values['SpeechResult']
 
         #post to discord
-        discordMessage = "**Phone Message**\n__Phone Number__: " + request.values["From"][:-4] + "XXXX\t__Name:__ \"" + name + "\"\n" + message
+        discordMessage = "**Incoming Phone Message**\nPhone Number: " + request.values["From"][:-4] + "XXXX\tName: \"" + name + "\"\n" + message
         with open("phonemsg.txt", 'w+') as file:
             file.write(discordMessage)
         resp.say("Okay!, the bot will post the following message. User " + name + " has posted the following message over the phone. " + message, voice='alice')
