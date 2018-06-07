@@ -1,8 +1,10 @@
 from flask import Flask, request
 from twilio.twiml.voice_response import VoiceResponse, Gather, Say
+from twilio.twiml.messaging_response import MessagingResponse
 
 import json
 import datetime
+import re
 
 app = Flask(__name__)
 
@@ -12,6 +14,22 @@ for x in range(0, len(secretKey)):
     secretKey[x] = secretKey[x][:-1]
 
 name = ""
+
+def getDiscordMsgs(number):
+    msgs = [] #?
+    date = datetime.date.today()
+    with open("message_store.txt", 'r') as file:
+        msgData = json.load(file)
+        for data in range(len(msgData)-int(choice),len(msgData)):
+            if not (msgData[data]["time"]["month"] == date.month and msgData[data]["time"]["day"] == date.day):
+                msgs.append("On " + str(msgData[data]["time"]["month"]) + " " + str(msgData[data]["time"]["day"]) 
+                    + " at " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
+                    + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n")
+            else:
+                msgs.append("At " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
+                    + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n")
+
+    return msgs
 
 @app.route("/answer", methods=['GET', 'POST'])
 def answer_call():
@@ -60,7 +78,7 @@ def discord_msg_menu():
         choice = request.values['Digits']
     
         if choice =='1':
-            gather = Gather(action='/discord_msgs')
+            gather = Gather(action='/call_discord_msgs')
             gather.say("Please enter the number of recent messages you would like to hear, followed by the pound sign", voice='alice')
             resp.append(gather)
         if choice =='2':
@@ -70,17 +88,17 @@ def discord_msg_menu():
             
     return str(resp)
     
-@app.route("/discord_msgs", methods=['GET', 'POST'])
-def discord_msgs():    
+@app.route("/call_discord_msgs", methods=['GET', 'POST'])
+def call_discord_msgs():    
     resp = VoiceResponse()
     if 'Digits' in request.values:
         choice = request.values['Digits']
     
         if int(choice) == 0:
-            resp.say("You must enter a value above zero", voice='alice')
+            resp.say("Error, You must enter a value above zero", voice='alice')
             resp.redirect('/main_menu')
         elif int(choice) > 15:
-            resp.say("The Limit of messages to hear is fifteen.", voice='alice')
+            resp.say("Sorry, The Limit of messages to listen to is fifteen.", voice='alice')
             resp.redirect('/main_menu')
         else:
             #resp.say("This has not yet been implemented. Thank you for calling")
@@ -88,13 +106,16 @@ def discord_msgs():
             with open("message_store.txt", 'r') as file:
                 msgData = json.load(file)
                 for data in range(len(msgData)-int(choice),len(msgData)):
+                    msgTime = str(msgData[data]["time"]["minute"])
+                    if len(msgTime) == 1:
+                        msgTime = "0" + msgTime
                     if not (msgData[data]["time"]["month"] == date.month and msgData[data]["time"]["day"] == date.day):
                         resp.say("On " + str(msgData[data]["time"]["month"]) + " " + str(msgData[data]["time"]["day"]) 
-                            + " at " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
-                            + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n", voice='alice')
+                            + " at " + str(msgData[data]["time"]["hour"]) + " " + msgTime 
+                            + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]), voice='alice')
                     else:
-                        resp.say("At " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
-                            + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n", voice='alice')
+                        resp.say("At " + str(msgData[data]["time"]["hour"]) + " " + msgTime
+                            + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]), voice='alice')
             resp.say("End of Messages.", voice='alice')
             resp.redirect('/main_menu')
             
@@ -123,12 +144,62 @@ def msg_post_content():
         message = request.values['SpeechResult']
 
         #post to discord
-        discordMessage = "**Incoming Phone Message**\nPhone Number: " + request.values["From"][:-4] + "XXXX\tName: \"" + name + "\"\n" + message
+        discordMessage = "**Incoming Phone Message**\nPhone Number: " + request.values["From"][:-4] + "XXXX\tName: \"" + name + "\"\tType: Phone Call\n" + message
         with open("phonemsg.txt", 'w+') as file:
             file.write(discordMessage)
-        resp.say("Okay!, the bot will post the following message. User " + name + " has posted the following message over the phone. " + message, voice='alice')
+        resp.say("Okay!, the bot will post the following message. User " + name + " Message " + message, voice='alice')
         resp.redirect('/main_menu')
         
+    return str(resp)
+    
+
+@app.route("/sms", methods=['GET', 'POST'])
+def incoming_sms():
+    """Send a dynamic reply to an incoming text message""" 
+    # Start our TwiML response
+    resp = MessagingResponse()
+    
+    # Get the message the user sent our Twilio number
+    if 'Body' in request.values:
+        body = request.values['Body']
+
+        # Determine the right reply for this message
+        method = re.findall(r"(?i)getmsgs|(?i)sendmsg", body)
+        if method:
+            if method[0].lower() == 'getmsgs':
+                number = re.findall(r"\s(\d{1,2})", body)
+                if number:
+                    numMesgs = number[0]
+                    date = datetime.date.today()
+                    sendText = "\n"
+                    if int(numMesgs) == 0:
+                        resp.message("Error, You must enter a value above zero", voice='alice')
+                    elif int(numMesgs) > 15:
+                        resp.message("Sorry, The Limit of messages to listen to is fifteen.", voice='alice')
+                    else:
+                        with open("message_store.txt", 'r') as file:
+                            msgData = json.load(file)
+                            for data in range(len(msgData)-int(numMesgs),len(msgData)):
+                                msgTime = str(msgData[data]["time"]["minute"])
+                                if len(msgTime) == 1:
+                                    msgTime = "0" + msgTime
+                                if not (msgData[data]["time"]["month"] == date.month and msgData[data]["time"]["day"] == date.day):
+                                    sendText += (str(msgData[data]["time"]["month"]) + "-" + str(msgData[data]["time"]["day"]) 
+                                        + "\t" + str(msgData[data]["time"]["hour"]) + ":" + msgTime 
+                                        + "\nUser: " + msgData[data]["user"] + "\n" + str(msgData[data]["content"]) + "\n")
+                                else:
+                                    sendText += (str(msgData[data]["time"]["hour"]) + ":" + msgTime 
+                                        + "\nUser: " + msgData[data]["user"] + "\n" + str(msgData[data]["content"]) + "\n")
+                        resp.message(sendText)
+            elif method[0].lower() == 'sendmsg':
+                name = re.findall(r"\n(.+)\n", body)
+                content = re.findall(r"\n.+\n(.+)", body)
+                if name and content:
+                    discordMessage = "**Incoming Phone Message**\nPhone Number: " + request.values["From"][:-4] + "XXXX\tName: \"" + str(name[0]) + "\"\tType: Text Msg\n" + str(content[0])
+                    with open("phonemsg.txt", 'w+') as file:
+                        file.write(discordMessage)
+                    resp.message("\nOkay! The bot will post the following message:\nUser: " + str(name[0]) + "\nMessage: " + str(content[0]))
+
     return str(resp)
     
     
