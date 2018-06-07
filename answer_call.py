@@ -15,23 +15,7 @@ for x in range(0, len(secretKey)):
 
 name = ""
 
-def getDiscordMsgs(number):
-    msgs = [] #?
-    date = datetime.date.today()
-    with open("message_store.txt", 'r') as file:
-        msgData = json.load(file)
-        for data in range(len(msgData)-int(choice),len(msgData)):
-            if not (msgData[data]["time"]["month"] == date.month and msgData[data]["time"]["day"] == date.day):
-                msgs.append("On " + str(msgData[data]["time"]["month"]) + " " + str(msgData[data]["time"]["day"]) 
-                    + " at " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
-                    + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n")
-            else:
-                msgs.append("At " + str(msgData[data]["time"]["hour"]) + " " + str(msgData[data]["time"]["minute"]) 
-                    + " user " + msgData[data]["user"] + " said " + str(msgData[data]["content"]) + "\n")
-
-    return msgs
-
-@app.route("/answer", methods=['GET', 'POST'])
+@app.route("/answer_call", methods=['GET', 'POST'])
 def answer_call():
     """Respond to incoming phone calls with a brief message."""
     # Start our TwiML response
