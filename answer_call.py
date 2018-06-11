@@ -155,7 +155,7 @@ def incoming_sms():
                 if number:
                     numMesgs = number[0]
                     date = datetime.date.today()
-                    sendText = "\n"
+                    sendText = ""
                     if int(numMesgs) == 0:
                         resp.message("Error, You must enter a value above zero", voice='alice')
                     elif int(numMesgs) > 15:

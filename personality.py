@@ -7,6 +7,10 @@ import json
 import os
 import time
 
+import utils
+
+textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] #general, dev, nsf, other
+
 secretFile = open("secrets.txt","r")
 secretKey = secretFile.readlines()
 for x in range(0, len(secretKey)):
@@ -72,30 +76,45 @@ def prettyMessage(filename):
     
     return finalMessage
     
-    
-class Personality:
-    
-    def __init__(self, bot):
-        self.bot = bot 
-            
-    def getPersonalityJSON(filename):
-        if os.path.exists("Personalities/" + filename + ".txt"):
-            if (os.path.getmtime("Personalities/" + filename + ".txt") < time.time() - 86400): #if a person db is more than 1 day old
-                with open("MessageLogs/" + filename + ".txt") as proFile:
-                    profile = personality_insights.profile(
-                        proFile.read(), content_type='text/plain',
-                        raw_scores=True, consumption_preferences=True)
-                    proFile.close()
-                with open("Personalities/" + filename + ".txt", 'w+') as file:
-                    file.write(json.dumps(profile, indent=2))
-
-        else: #file doesn't exist, create
+def getPersonalityJSON(filename):
+    if os.path.exists("Personalities/" + filename + ".txt"):
+        if (os.path.getmtime("Personalities/" + filename + ".txt") < time.time() - 86400): #if a person db is more than 1 day old
             with open("MessageLogs/" + filename + ".txt") as proFile:
                 profile = personality_insights.profile(
                     proFile.read(), content_type='text/plain',
                     raw_scores=True, consumption_preferences=True)
+                proFile.close()
             with open("Personalities/" + filename + ".txt", 'w+') as file:
                 file.write(json.dumps(profile, indent=2))
-                
-        finalMessage = prettyMessage(filename)
-        return finalMessage        
+
+    else: #file doesn't exist, create
+        with open("MessageLogs/" + filename + ".txt") as proFile:
+            profile = personality_insights.profile(
+                proFile.read(), content_type='text/plain',
+                raw_scores=True, consumption_preferences=True)
+        with open("Personalities/" + filename + ".txt", 'w+') as file:
+            file.write(json.dumps(profile, indent=2))
+            
+    finalMessage = prettyMessage(filename)
+    return finalMessage  
+    
+    
+class Personality:
+    
+    def __init__(self, bot):
+        self.bot = bot       
+    
+    @commands.command(pass_context=True)
+    async def analyze(self, ctx, username):
+        channelID = ctx.message.channel.id
+        channelToGetData = self.bot.get_channel("170682390786605057") #always General
+        username = username.strip("<>@!")
+        if channelID in textChatIDlist:
+            await utils.buildDatabase(username, channelToGetData, self.bot)
+            message = getPersonalityJSON(username)
+            partOneMark = message.index("Purchasing Preferences")
+            partTwoMark = message.index("Movie Preferences")
+            #-2 for discord __ underline formatting
+            await self.bot.say(message[:partOneMark-2])
+            await self.bot.say(message[partOneMark-2:partTwoMark-2])
+            await self.bot.say(message[partTwoMark-2:])
