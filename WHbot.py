@@ -19,11 +19,9 @@ import toneReactions
 import personality
 import phoneCall
 
-
-secretFile = open("secrets.txt","r")
-secretKey = secretFile.readlines()
-for x in range(0, len(secretKey)):
-    secretKey[x] = secretKey[x][:-1]
+    
+with open("secrets.txt", "r") as secretFile:
+    secretKey = [key[:-1] for key in secretFile.readlines()]
 
 logging.basicConfig(level=logging.INFO) #INFO/DEBUG
 

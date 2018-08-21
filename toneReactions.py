@@ -7,10 +7,8 @@ from watson_developer_cloud import ToneAnalyzerV3
 
 textChatIDlist = ["170682390786605057", "302137557896921089"]
 
-secretFile = open("secrets.txt","r")
-secretKey = secretFile.readlines()
-for x in range(0, len(secretKey)):
-    secretKey[x] = secretKey[x][:-1]
+with open("secrets.txt", "r") as secretFile:
+    secretKey = [key[:-1] for key in secretFile.readlines()]
     
 #globals for switching tones on/off
 toneSwitch = False

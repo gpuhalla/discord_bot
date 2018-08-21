@@ -11,10 +11,8 @@ import utils
 
 textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] #general, dev, nsf, other
 
-secretFile = open("secrets.txt","r")
-secretKey = secretFile.readlines()
-for x in range(0, len(secretKey)):
-    secretKey[x] = secretKey[x][:-1]
+with open("secrets.txt", "r") as secretFile:
+    secretKey = [key[:-1] for key in secretFile.readlines()]
     
 personality_insights = PersonalityInsightsV3(
     username=secretKey[12],

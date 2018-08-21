@@ -8,10 +8,8 @@ import re
 
 app = Flask(__name__)
 
-secretFile = open("secrets.txt","r")
-secretKey = secretFile.readlines()
-for x in range(0, len(secretKey)):
-    secretKey[x] = secretKey[x][:-1]
+with open("secrets.txt", "r") as secretFile:
+    secretKey = [key[:-1] for key in secretFile.readlines()]
 
 name = ""
 
