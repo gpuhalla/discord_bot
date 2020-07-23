@@ -21,7 +21,7 @@ def checkTableExists(tableName):
 async def addPoints(userID, numPoints):
     points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
     if points_cursor.fetchone() is None:
-        points_cursor.execute("INSERT INTO Points (UserID, numPoints) VALUES (?, 0)", (str(userID), ))
+        points_cursor.execute("INSERT INTO Points (UserID, numPoints, lastMessage) VALUES (?, 0, 0)", (str(userID), ))
         conn.commit()
     points_cursor.fetchall()
     points_cursor.execute("UPDATE Points SET numPoints = numPoints + ? WHERE UserID = ?", (int(numPoints), str(userID), ))
@@ -32,12 +32,22 @@ async def addPoints(userID, numPoints):
 async def deductPoints(userID, numPoints):
     points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
     if points_cursor.fetchone() is None:
-        points_cursor.execute("INSERT INTO Points (UserID, numPoints) VALUES (?, 0)", (str(userID), ))
+        points_cursor.execute("INSERT INTO Points (UserID, numPoints, lastMessage) VALUES (?, 0, 0)", (str(userID), ))
         conn.commit()
     points_cursor.fetchall()
     points_cursor.execute("UPDATE Points SET numPoints = numPoints - ? WHERE UserID = ?", (int(numPoints), str(userID), ))
     conn.commit()
 
+#updates a user's entry with the unix time of their last message sent
+async def updateLastMessage(userID, uTime):
+    points_cursor.execute("SELECT * FROM Points WHERE UserID = ?", (str(userID), ))
+    if points_cursor.fetchone() is None:
+        points_cursor.execute("INSERT INTO Points (UserID, numPoints, lastMessage) VALUES (?, 0, 0)", (str(userID), ))
+        conn.commit()
+    points_cursor.fetchall()
+    points_cursor.execute("UPDATE Points SET lastMessage = ? WHERE UserID = ?", (uTime, str(userID), ))
+    conn.commit()
+    
 
 class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
     
@@ -139,11 +149,15 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
     async def pointsBackgroundTask(bot):
         await bot.wait_until_ready()
         if not checkTableExists("Points"):
-            points_cursor.execute("""CREATE TABLE "Points" ("UserID" VARCHAR(20) PRIMARY KEY NOT NULL UNIQUE, "numPoints" INTEGER NOT NULL DEFAULT 0)""")
+            points_cursor.execute("""CREATE TABLE "Points" ("UserID" VARCHAR(20) PRIMARY KEY NOT NULL UNIQUE, "numPoints" INTEGER NOT NULL DEFAULT 0, "lastMessage" INTEGER NOT NULL DEFAULT 0)""")
         while not bot.is_closed:
             for guild in bot.guilds:
                 for member in guild.members:
-                    if member.status == discord.enums.Status.online and member.id != bot.user.id:
+                    points_cursor.execute("SELECT lastMessage FROM Points WHERE UserID = ?", (str(userID), ))
+                    lastMessage = points_cursor.fetchone()
+                    points_cursor.fetchall()
+                    userActive = ((int(time.time()) - lastMessage) => 2592000)
+                    if userActive and member.status == discord.enums.Status.online and member.id != bot.user.id:
                         await addPoints(member.id, 1)
             await asyncio.sleep(60)
         
