@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import asyncio  #asynchronous functions
 import sqlite3  #database communication
+import time
 import random
 
 conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
