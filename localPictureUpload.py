@@ -8,7 +8,7 @@ import random
 masterDBList = {}                       #List of folders in the same directory as the bot
 bonusDBList = {}                        #List of nested bonus folders
 
-textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] #general, dev, nsf, other
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638] 
 
 #Method for picking a random picture in a folder located in the same directory
 #as the bot. Default probability is 1/100
@@ -23,7 +23,7 @@ async def uploadRandomPicture(bot, inputFolder, bonusProb=100):
         try:
             masterDBList[folderName] = os.listdir(folderName)
         except:
-            await bot.say("Error in directory listing. Check that folder exists.")
+            await bot.send("Error in directory listing. Check that folder exists.")
             return
             
     #bonus operations
@@ -36,9 +36,9 @@ async def uploadRandomPicture(bot, inputFolder, bonusProb=100):
             try:
                 bonusDBList[bonusfolder] = os.listdir(bonusfolder)
             except:
-                await bot.say("Error in directory listing. Check that bonusfolder exists.")
+                await bot.send("Error in directory listing. Check that bonusfolder exists.")
                 return
-        await bot.say("__***BONUS ROUND***__")
+        await bot.send("__***BONUS ROUND***__")
         length = len(bonusDBList.get(bonusfolder))
         rngNumber = random.randint(0, length - 1)
         fileName = bonusDBList.get(bonusfolder)[rngNumber]
@@ -46,7 +46,7 @@ async def uploadRandomPicture(bot, inputFolder, bonusProb=100):
             rngNumber = random.randint(0, length - 1)
             fileName = bonusDBList.get(bonusfolder)[rngNumber]
         #print(bonusfolder + "\\" + bonusDBList.get(bonusfolder)[rngNumber]) #debug for bonus error
-        await bot.upload(bonusfolder + "//" + bonusDBList.get(bonusfolder)[rngNumber])
+        await bot.send(file=discord.File(bonusfolder + "//" + bonusDBList.get(bonusfolder)[rngNumber]))
         return
     
     #normal operations
@@ -57,35 +57,35 @@ async def uploadRandomPicture(bot, inputFolder, bonusProb=100):
         rngNumber = random.randint(0, length - 1)
         fileName = masterDBList.get(folderName)[rngNumber]
     #print(folderName + "//" + masterDBList.get(folderName)[rngNumber])
-    await bot.upload(folderName + "//" + masterDBList.get(folderName)[rngNumber])
+    await bot.send(file=discord.File(folderName + "//" + masterDBList.get(folderName)[rngNumber]))
     return
     
 
-class LocalPictureUpload:
+class LocalPictureUpload(commands.Cog, name='LocalPictureUpload'):
     
     def __init__(self, bot):
         self.bot = bot    
 
     #the whole reason this bot exists
-    @commands.command(pass_context=True)
+    @commands.command()
     async def catgirl(self, ctx):
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
-            await uploadRandomPicture(self.bot, "CatgirlDB", 100)
+            await uploadRandomPicture(ctx, "CatgirlDB", 100)
         return
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def shrek(self, ctx):
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
-            await uploadRandomPicture(self.bot, "shrek", 0)
+            await uploadRandomPicture(ctx, "shrek", 0)
         return
         
-    @commands.command(pass_context=True)
+    @commands.command()
     async def husbando(self, ctx):
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
-            await uploadRandomPicture(self.bot, "husbandodb", 100)
+            await uploadRandomPicture(ctx, "husbandodb", 100)
         return   
     
     # Supplanted by version in reddit - Old functionaility
@@ -93,11 +93,14 @@ class LocalPictureUpload:
     # async def fuckmarrykill(self, ctx):
         # channelID = ctx.message.channel.id
         # if channelID in textChatIDlist:
-            # await self.bot.say("Bachelor(ette) #1")
+            # await self.bot.send("Bachelor(ette) #1")
             # await uploadRandomPicture("fmk", 0)
             # await asyncio.sleep(2)
-            # await self.bot.say("Bachelor(ette) #2")
+            # await self.bot.send("Bachelor(ette) #2")
             # await uploadRandomPicture("fmk", 0)
             # await asyncio.sleep(2)
-            # await self.bot.say("Bachelor(ette) #3")
+            # await self.bot.send("Bachelor(ette) #3")
             # await uploadRandomPicture("fmk", 0)
+			
+def setup(bot):
+    bot.add_cog(LocalPictureUpload(bot))

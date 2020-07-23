@@ -5,7 +5,7 @@ from discord.ext import commands
 import random
 import praw     #reddit api
 
-textChatIDlist = ["170682390786605057", "302137557896921089", "302965414793707522", "293186321395220481"] #general, dev, nsf, other
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638] 
 
 with open("secrets.txt", "r") as secretFile:
     secretKey = [key[:-1] for key in secretFile.readlines()]
@@ -34,7 +34,7 @@ def getHotSubRedditImage(subreddit, numHot):
     #picks a random url from the array
     return urlArray[subrngNumber]
     
-class Reddit:
+class Reddit(commands.Cog, name='Reddit'):
     
     def __init__(self, bot):
         self.bot = bot
@@ -45,7 +45,7 @@ class Reddit:
         #print(channelID) debug to find channel id
         if channelID in textChatIDlist:
             link =  getHotSubRedditImage("awwnime", 25)
-            await self.bot.say(link)
+            await ctx.send(link)
         return
 
     @commands.command(pass_context=True)
@@ -53,7 +53,7 @@ class Reddit:
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
             link = getHotSubRedditImage(subreddit, 25)
-            await self.bot.say(link)
+            await ctx.send(link)
         return   
         
     
@@ -61,19 +61,22 @@ class Reddit:
     async def fuckmarrykill(self, ctx):
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
-            await self.bot.say("Bachelor(ette) #1")
+            await ctx.send("Bachelor(ette) #1")
             link = getHotSubRedditImage("gentlemanboners", 25)
-            self.bot.say(link)
-            await self.bot.say("Bachelor(ette) #2")
+            await ctx.send(link)
+            await ctx.send("Bachelor(ette) #2")
             link = getHotSubRedditImage("LadyBoners", 25)
-            self.bot.say(link)
-            await self.bot.say("Bachelor(ette) #3")
+            await ctx.send(link)
+            await ctx.send("Bachelor(ette) #3")
             rngNumber = random.randint(1, 3)
             if rngNumber == 1:
                 link = getHotSubRedditImage("gentlemanboners", 25)
-                self.bot.say(link)
+                await ctx.send(link)
             elif rngNumber == 2:
-                await getHotSubRedditImage("LadyBoners", 25)
-                self.bot.say(link)
+                link = getHotSubRedditImage("LadyBoners", 25)
+                await ctx.send(link)
 
         return
+
+def setup(bot):
+    bot.add_cog(Reddit(bot))

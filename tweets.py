@@ -20,7 +20,7 @@ consumer_secret = secretKey[7]
 access_key = secretKey[8]
 access_secret = secretKey[9]
 
-textChatIDlist = ["170682390786605057", "302137557896921089", "293186321395220481"]
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638]
     
 def get_all_tweets(screen_name):
     #Twitter only allows access to a users most recent 3240 tweets with this method
@@ -64,14 +64,17 @@ def get_all_tweets(screen_name):
     
     return str(formattedTweet)
     
-class Twitter:
+class Twitter(commands.Cog, name='Twitter'):
     
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def tweet(self, ctx):
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
             tweet = get_all_tweets("LuncanDucas")
-            await self.bot.say(tweet)
+            await ctx.send(tweet)
+
+def setup(bot):
+    bot.add_cog(Twitter(bot))
