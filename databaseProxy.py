@@ -160,7 +160,7 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
                     points_cursor.fetchall()
                     if lastMessage == None:
                         lastMessage = (0, 0) #LUCAS
-                    userActive = (int(time.time()) - lastMessage[0]) >= 2592000
+                    userActive = (int(time.time()) - lastMessage[0]) <= 2592000
                     if userActive and member.status == discord.enums.Status.online and member.id != self.bot.user.id:
                         await addPoints(member.id, 1)
             await asyncio.sleep(60)
