@@ -54,6 +54,7 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
     
     def __init__(self, bot):
         self.bot = bot
+        self.pointsBackgroundTask.start()
 
     #prints how many points the user has that issued the command
     @commands.command()
@@ -136,7 +137,7 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
     #adds a quote to the sqlite database
     #e.g. !addquote "I like food" "Lucas"
     @commands.command()
-    async def addquote(ctx, quote, attributor):
+    async def addquote(self, ctx, quote, attributor):
         channelID = ctx.message.channel.id
         if channelID in textChatIDlist:
             #Checks if table exists before adding quote. Creates table if it does not.
@@ -147,18 +148,20 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
         
     #increments points for each user currently in the channel every 60s
     @tasks.loop(seconds=60)
-    async def pointsBackgroundTask(bot):
-        await bot.wait_until_ready()
+    async def pointsBackgroundTask(self):
+        await self.bot.wait_until_ready()
         if not checkTableExists("Points"):
             points_cursor.execute("""CREATE TABLE "Points" ("UserID" VARCHAR(20) PRIMARY KEY NOT NULL UNIQUE, "numPoints" INTEGER NOT NULL DEFAULT 0, "lastMessage" INTEGER NOT NULL DEFAULT 0)""")
-        while not bot.is_closed:
-            for guild in bot.guilds:
+        while not self.bot.is_closed():
+            for guild in self.bot.guilds:
                 for member in guild.members:
-                    points_cursor.execute("SELECT lastMessage FROM Points WHERE UserID = ?", (str(userID), ))
+                    points_cursor.execute("SELECT lastMessage FROM Points WHERE UserID = ?", (str(member.id), ))
                     lastMessage = points_cursor.fetchone()
                     points_cursor.fetchall()
-                    userActive = ((int(time.time()) - lastMessage) => 2592000)
-                    if userActive and member.status == discord.enums.Status.online and member.id != bot.user.id:
+                    if lastMessage == None:
+                        lastMessage = (0, 0) #LUCAS
+                    userActive = (int(time.time()) - lastMessage[0]) >= 2592000
+                    if userActive and member.status == discord.enums.Status.online and member.id != self.bot.user.id:
                         await addPoints(member.id, 1)
             await asyncio.sleep(60)
         

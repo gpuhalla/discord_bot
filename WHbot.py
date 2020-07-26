@@ -8,12 +8,12 @@ import time     #for random
 import logging  #logs
 
 #Active function files
-#import music 
+import newMusic 
 import localPictureUpload
 import databaseProxy
 import reddit
 import tweets   
-#import botSpeak
+import botSpeak
 
     
 with open("secrets.txt", "r") as secretFile:
@@ -26,12 +26,12 @@ textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 29
 #bot instantiator
 bot = commands.Bot(command_prefix='!', description='The official Waffle House bot')
 #add functionalities from each file
-#bot.add_cog(music.Music(bot))
+bot.load_extension("newMusic")
 bot.load_extension("localPictureUpload")
 bot.load_extension("databaseProxy")
 bot.load_extension("reddit")
 bot.load_extension("tweets")
-#bot.add_cog(botSpeak.BotSpeak(bot))
+bot.load_extension("botSpeak")
 
 
 #prints to console when bot starts up
