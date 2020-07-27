@@ -22,6 +22,8 @@ Portable Bot Archive/
 secrets.txt
 Old bots/oldBLANbotKeys.txt
 Retired Commands/systools/emailLoginTextFile.txt
+PhoneIntroSound.mp3
+new_user_credentials.csv
 
 #Botchat conversation database
 database.db
