@@ -9,7 +9,7 @@ conn = sqlite3.connect('bot_db.sqlite') #sqlite connection
 c = conn.cursor()                       #sqlite communication cursor
 points_cursor = conn.cursor()           #background cursor to reduce command conflicts
 
-textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638] 
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] 
 
 #checks if a table exists
 def checkTableExists(tableName):

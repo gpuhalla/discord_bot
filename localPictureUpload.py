@@ -8,7 +8,7 @@ import random
 masterDBList = {}                       #List of folders in the same directory as the bot
 bonusDBList = {}                        #List of nested bonus folders
 
-textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638] 
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] 
 
 #Method for picking a random picture in a folder located in the same directory
 #as the bot. Default probability is 1/100

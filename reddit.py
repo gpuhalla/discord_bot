@@ -5,7 +5,7 @@ from discord.ext import commands
 import random
 import praw     #reddit api
 
-textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638] 
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] 
 
 with open("secrets.txt", "r") as secretFile:
     secretKey = [key[:-1] for key in secretFile.readlines()]

@@ -21,10 +21,14 @@ with open("secrets.txt", "r") as secretFile:
 
 logging.basicConfig(level=logging.INFO) #INFO/DEBUG
 
-textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638] #general, dev, nsf, other, spam
+textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] #general, dev, nsf, other, spam
+
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
 
 #bot instantiator
-bot = commands.Bot(command_prefix='!', description='The official Waffle House bot')
+bot = commands.Bot(command_prefix='!', description='The official Waffle House bot', intents = intents)
 #add functionalities from each file
 bot.load_extension("newMusic")
 bot.load_extension("localPictureUpload")
