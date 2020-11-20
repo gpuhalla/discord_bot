@@ -9,12 +9,12 @@ import math
 import random
 
 import discord
-import youtube_dl
+import youtube_dlc
 from async_timeout import timeout
 from discord.ext import commands
 
 # Silence useless bug reports messages
-youtube_dl.utils.bug_reports_message = lambda: ''
+youtube_dlc.utils.bug_reports_message = lambda: ''
 
 
 class VoiceError(Exception):
@@ -47,7 +47,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'options': '-vn',
     }
 
-    ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
+    ytdl = youtube_dlc.YoutubeDL(YTDL_OPTIONS)
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
         super().__init__(source, volume)
