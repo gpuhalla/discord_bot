@@ -11,6 +11,8 @@ points_cursor = conn.cursor()           #background cursor to reduce command con
 
 textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] 
 
+bettingTable = [];
+
 #checks if a table exists
 def checkTableExists(tableName):
     c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?", (tableName, ))
@@ -145,6 +147,62 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
                 c.execute('''CREATE TABLE "quotes" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `attributor` text NOT NULL, `quote` text NOT NULL )''')
             c.execute("INSERT INTO quotes (quote, attributor) VALUES (?, ?);", (quote, attributor))
         conn.commit()
+        
+    @commands.command()
+    async def bet(self, ctx, number, amount):
+        channelID = ctx.message.channel.id
+        if channelID == 318824529478549504:
+            userID = ctx.message.author.id
+            name = ctx.message.author.name
+            c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
+            points = c.fetchone()
+            c.fetchall()
+
+            points = int(points[0])
+            if amount.strip().lower() == "all":
+                amount = points
+            else:
+                amount = int(float(amount))
+                
+            emoji = '❌' 
+            if points is None or points == 0:
+                await ctx.message.add_reaction(emoji)
+                await ctx.send("You have no points to bet, baka!")
+            elif amount <= 0:
+                await ctx.message.add_reaction(emoji)
+                await ctx.send("You can't bet nothing, baka!")
+            elif amount > points:
+                await ctx.message.add_reaction(emoji)
+                await ctx.send("That bet is too high! You can only bet {0} points!".format(points))
+            else:
+                global bettingTable
+                for bet in bettingTable:
+                    if bet[0] == ctx.message.author.id:
+                        bettingTable.remove(bet)
+                        break
+                bettingTable.append([ctx.message.author.id, ctx.message.author.name, number, amount])
+                emoji = '✅'
+                await ctx.message.add_reaction(emoji)
+                
+                
+    @commands.command()
+    async def winner(self, ctx, number):
+        channelID = ctx.message.channel.id
+        userID = ctx.message.author.id
+        if channelID == 318824529478549504 and userID == 147867330917957633: #needs to be me
+            fullWinnerString = ""
+            global bettingTable
+            for bet in bettingTable:
+                if bet[2] == number:
+                    await addPoints(bet[0], bet[3])
+                    winString = "<@" + str(bet[0]) + "> is a winner! +" + str(bet[3]) + " points!\n"
+                    fullWinnerString += winString
+                else:
+                    await deductPoints(bet[0], bet[3])
+                    lostString = "<@" + str(bet[0]) + "> is a loser! -" + str(bet[3]) + " points!\n"
+                    fullWinnerString += lostString
+            await ctx.send(fullWinnerString)
+            bettingTable = []    
         
     #increments points for each user currently in the channel every 60s
     @tasks.loop(seconds=60)
