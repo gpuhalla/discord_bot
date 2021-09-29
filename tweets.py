@@ -34,7 +34,7 @@ def get_all_tweets(screen_name):
     alltweets = []  
     
     #make initial request for most recent tweets (200 is the maximum allowed count)
-    new_tweets = api.user_timeline(screen_name = screen_name,count=110)
+    new_tweets = api.user_timeline(screen_name = screen_name, exclude_replies = True, tweet_mode = "extended", count=110)
     
     #save most recent tweets
     alltweets.extend(new_tweets)
@@ -43,9 +43,9 @@ def get_all_tweets(screen_name):
     #oldest = alltweets[-1].id - 1
     
     #transform the tweepy tweets into a 2D array that will populate the csv 
-    outtweets = [[tweet.created_at, tweet.text.encode("utf-8")] for tweet in alltweets]
+    outtweets = [[tweet.created_at, tweet.full_text.encode("utf-8")] for tweet in alltweets]
     
-    rngNumber = random.randint(2, 100)
+    rngNumber = random.randint(2, len(outtweets))
     
     pickedTweet = outtweets[rngNumber]
     
