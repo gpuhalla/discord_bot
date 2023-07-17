@@ -11,7 +11,11 @@ points_cursor = conn.cursor()           #background cursor to reduce command con
 
 textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] 
 
-bettingTable = [];
+bettingTable = []
+gambleStarter = ""
+gambleOptions = []
+removableOptions = []
+gambleType = ""
 
 #checks if a table exists
 def checkTableExists(tableName):
@@ -149,60 +153,150 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
         conn.commit()
         
     @commands.command()
-    async def bet(self, ctx, number, amount):
+    async def bet(self, ctx, option, amount):
         channelID = ctx.message.channel.id
         if channelID == 318824529478549504:
             userID = ctx.message.author.id
             name = ctx.message.author.name
-            c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
-            points = c.fetchone()
-            c.fetchall()
+            global gambleStarter, gambleType, gambleOptions, removableOptions
+            if gambleStarter == "":
+                await ctx.send("No gamble running, baka!")
+            elif gambleType == "double" and gambleStarter == userID:
+                await ctx.send("STOP CHEATING BAAAAKAAAA!!!")
+            else:
+                if option not in gambleOptions:
+                    await ctx.send("That isn't a gamble option!")
+                elif gambleType == "all" and option not in removableOptions:
+                    await ctx.send("Someone already took that, baka!")
+                else:
+                    if gambleType == "all":
+                        removableOptions.remove(option)
+                
+                    c.execute("SELECT numPoints FROM Points WHERE UserID = ?", (str(userID), ))
+                    points = c.fetchone()
+                    c.fetchall()
 
-            points = int(points[0])
-            if amount.strip().lower() == "all":
-                amount = points
-            else:
-                amount = int(float(amount))
-                
-            emoji = '❌' 
-            if points is None or points == 0:
-                await ctx.message.add_reaction(emoji)
-                await ctx.send("You have no points to bet, baka!")
-            elif amount <= 0:
-                await ctx.message.add_reaction(emoji)
-                await ctx.send("You can't bet nothing, baka!")
-            elif amount > points:
-                await ctx.message.add_reaction(emoji)
-                await ctx.send("That bet is too high! You can only bet {0} points!".format(points))
-            else:
-                global bettingTable
-                for bet in bettingTable:
-                    if bet[0] == ctx.message.author.id:
-                        bettingTable.remove(bet)
-                        break
-                bettingTable.append([ctx.message.author.id, ctx.message.author.name, number, amount])
-                emoji = '✅'
-                await ctx.message.add_reaction(emoji)
-                
+                    points = int(points[0])
+                    if amount.strip().lower() == "all":
+                        amount = points
+                    else:
+                        amount = int(float(amount))
+                        
+                    emoji = '❌' 
+                    if points is None or points == 0:
+                        await ctx.message.add_reaction(emoji)
+                        await ctx.send("You have no points to bet, baka!")
+                    elif amount <= 0:
+                        await ctx.message.add_reaction(emoji)
+                        await ctx.send("You can't bet nothing, baka!")
+                    elif amount > points:
+                        await ctx.message.add_reaction(emoji)
+                        await ctx.send("That bet is too high! You can only bet {0} points!".format(points))
+                    else:
+                        global bettingTable
+                        for bet in bettingTable:
+                            if bet[0] == ctx.message.author.id:
+                                bettingTable.remove(bet)
+                                break
+                        bettingTable.append([ctx.message.author.id, ctx.message.author.name, option, amount])
+                        emoji = '✅'
+                        await ctx.message.add_reaction(emoji)
+    
                 
     @commands.command()
-    async def winner(self, ctx, number):
+    async def gamble(self, ctx, type, *options):
         channelID = ctx.message.channel.id
         userID = ctx.message.author.id
-        if channelID == 318824529478549504 and userID == 147867330917957633: #needs to be me
-            fullWinnerString = ""
-            global bettingTable
-            for bet in bettingTable:
-                if bet[2] == number:
-                    await addPoints(bet[0], bet[3])
-                    winString = "<@" + str(bet[0]) + "> is a winner! +" + str(bet[3]) + " points!\n"
-                    fullWinnerString += winString
+        global gambleStarter, gambleOptions, gambleType, removableOptions
+        if channelID == 318824529478549504:
+            if gambleStarter != "":
+                await ctx.send("A gamble is already in progress!")
+            elif type.lower() not in ["weighted", "all", "double"]:
+                await ctx.send("That isn't a gamble type!")
+            elif options == None or len(options) < 2:
+                await ctx.send("Your gamble needs multiple options!")
+            else:
+                gambleStarter = userID
+                gambleOptions = list(options)
+                gambleType = type.lower()
+                #print(type(gamebleOptions)
+                removableOptions = gambleOptions
+                gamestring = ""
+                if gambleType == "weighted":
+                    gamestring = "It's a weighted gamble, bet more win more! "
+                elif gambleType == "all":
+                    gamestring = "It's all or nothing, winner takes all! "
                 else:
+                    gamestring = "It's double or nothing, double your wager! "
+                gambleString = "Gamble has Started! " + gamestring + "Please select one of the following options: "
+                for option in options:
+                    gambleString = gambleString + "\n" + option
+                await ctx.send(gambleString)
+            
+    @commands.command()
+    async def winner(self, ctx, option):
+        channelID = ctx.message.channel.id
+        userID = ctx.message.author.id
+        global bettingTable, gambleType, gambleStarter
+        if channelID == 318824529478549504 and userID == gambleStarter: #needs to be me
+            fullWinnerString = "No bets, baka!"
+            winString = ""
+            if gambleType == "double":
+                for bet in bettingTable:
+                    if bet[2] == option:
+                        fullWinnerString = ""
+                        await addPoints(bet[0], bet[3])
+                        winString = "<@" + str(bet[0]) + "> is a winner! +" + str(bet[3]) + " points!\n"
+                        fullWinnerString += winString
+                    else:
+                        await deductPoints(bet[0], bet[3])
+                        lostString = "<@" + str(bet[0]) + "> is a loser! -" + str(bet[3]) + " points!\n"
+                        fullWinnerString += lostString
+            elif gambleType == "weighted":
+                value = 0
+                valueWinners = 0
+                winners = []
+                for bet in bettingTable:
+                    value += bet[3]
                     await deductPoints(bet[0], bet[3])
-                    lostString = "<@" + str(bet[0]) + "> is a loser! -" + str(bet[3]) + " points!\n"
-                    fullWinnerString += lostString
+                    if bet[2] == option:
+                        winners.append([bet[0], bet[3]])
+                        valueWinners += bet[3]
+                if len(winners) == 0:
+                    winString = "No winners, everyone loses!"
+                else:
+                    for winner in winners:
+                        await addPoints(winner[0], value * (winner[1] // valueWinners))
+                        winString = "<@" + str(winner[0]) + "> is a winner! +" + str((value * (winner[1] // valueWinners)) - winner[1]) + " points!\n"
+                fullWinnerString = ""
+                fullWinnerString += winString
+            elif gambleType == "all":
+                fullWinnerString = ""
+                value = 0
+                winner = ""
+                for bet in bettingTable:
+                    value += bet[3]
+                    await deductPoints(bet[0], bet[3])
+                    if bet[2] == option:
+                        winner = bet[0]              
+                await addPoints(winner, value)
+                winString = "<@" + str(bet[0]) + "> is the winner! The pot was " + str(value) + " points!\n"
+                fullWinnerString += winString
             await ctx.send(fullWinnerString)
-            bettingTable = []    
+            bettingTable = []
+            gambleStarter = ""
+            gambleOptions = []
+            removableOptions = []
+            gambleType = ""
+        elif channelID == 318824529478549504 and userID == 147867330917957633 and option == "x":
+            await ctx.send("Bet ended manually!")
+            bettingTable = []
+            gambleStarter = ""
+            gambleOptions = []
+            removableOptions = []
+            gambleType = ""
+        else:
+            await ctx.send("No gamble in progress, baka!")
         
     #increments points for each user currently in the channel every 60s
     @tasks.loop(seconds=60)
