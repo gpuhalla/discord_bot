@@ -102,5 +102,5 @@ class LocalPictureUpload(commands.Cog, name='LocalPictureUpload'):
             # await self.bot.send("Bachelor(ette) #3")
             # await uploadRandomPicture("fmk", 0)
 			
-def setup(bot):
-    bot.add_cog(LocalPictureUpload(bot))
+async def setup(bot):
+    await bot.add_cog(LocalPictureUpload(bot))

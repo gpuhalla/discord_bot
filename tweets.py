@@ -76,5 +76,5 @@ class Twitter(commands.Cog, name='Twitter'):
             tweet = get_all_tweets("LuncanDucas")
             await ctx.send(tweet)
 
-def setup(bot):
-    bot.add_cog(Twitter(bot))
+async def setup(bot):
+    await bot.add_cog(Twitter(bot))

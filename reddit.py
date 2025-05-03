@@ -78,5 +78,5 @@ class Reddit(commands.Cog, name='Reddit'):
 
         return
 
-def setup(bot):
-    bot.add_cog(Reddit(bot))
+async def setup(bot):
+    await bot.add_cog(Reddit(bot))

@@ -1,6 +1,7 @@
 #REMEMBER TO CLEAN OLD HEADERS FOR INODES
 import discord
 from discord.ext import commands
+from discord import app_commands
 import asyncio  #asynchronous functions
 import random   #rng generator
 import hashlib  #for random
@@ -8,39 +9,38 @@ import time     #for random
 import logging  #logs
 
 #Active function files
-import newMusic 
-import localPictureUpload
 import databaseProxy
-import reddit
-import tweets   
-import botSpeak
-
-    
-with open("secrets.txt", "r") as secretFile:
-    secretKey = [key[:-1] for key in secretFile.readlines()]
-
-logging.basicConfig(level=logging.INFO) #INFO/DEBUG
 
 textChatIDlist = [170682390786605057, 302137557896921089, 302965414793707522, 293186321395220481, 570471843538927638, 318824529478549504] #general, dev, nsf, other, spam
 
-intents = discord.Intents.default()
-intents.members = True
-intents.presences = True
-
 #bot instantiator
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', description='The official Waffle House bot', intents = intents)
-#add functionalities from each file
-bot.load_extension("newMusic")
-bot.load_extension("localPictureUpload")
-bot.load_extension("databaseProxy")
-bot.load_extension("reddit")
-bot.load_extension("tweets")
-bot.load_extension("botSpeak")
+
+
+async def main():  
+    with open("secrets.txt", "r") as secretFile:
+        secretKey = [key[:-1] for key in secretFile.readlines()]
+
+    logging.basicConfig(level=logging.INFO) #INFO/DEBUG
+
+    #add functionalities from each file
+    await bot.load_extension("newMusic")
+    await bot.load_extension("localPictureUpload")
+    await bot.load_extension("databaseProxy")
+    await bot.load_extension("reddit")
+    await bot.load_extension("tweets")
+    await bot.load_extension("botSpeak")
+    #await bot.load_extension("loopback_speak")
+
+    async with bot:
+        await bot.start(secretKey[0])
 
 
 #prints to console when bot starts up
 @bot.event
 async def on_ready():
+    #bot.app_commands.CommandTree.sync()
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
@@ -53,23 +53,12 @@ async def on_message(message):
     await databaseProxy.updateLastMessage(message.author.id, int(time.time()))
     await bot.process_commands(message)
     
-
-def getAmazonLink(number):
-    f = open("amazonlist.txt","r")
-    lines = f.readlines()
-    line = lines[number]
-    start = line.index('h')
-    #print(line)
-    amazonLink = line[start:]
-    return str(amazonLink)
-    
-            
 #tests if bot is actually functioning
-@bot.command()
+@bot.hybrid_command()
 async def test(ctx):
     await ctx.send('Test!')
     
-@bot.command()
+@bot.hybrid_command()
 async def dance(ctx):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
@@ -88,7 +77,7 @@ async def dance(ctx):
             await messageToEdit.edit(content="└(=^‥^=)┐")
     return
                      
-@bot.command()
+@bot.hybrid_command()
 async def spell(ctx, message : str):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
@@ -100,21 +89,12 @@ async def spell(ctx, message : str):
         else:
             await ctx.send("That's too long!")
             
-@bot.command()
+@bot.hybrid_command()
 async def why(ctx):
     channelID = ctx.message.channel.id
     if channelID in textChatIDlist:
          await ctx.send("why not?")
-         
-@bot.command()
-async def amazon(ctx): #number : int
-    channelID = ctx.message.channel.id
-    if channelID in textChatIDlist:
-        number = random.randint(0, 941)
-        amazonLink = getAmazonLink(number)
-        await ctx.send("How many quality Amazon products are there? At least " + str(number) + ". " + str(amazonLink))
-        
-        
+
 #These need to be at the bottom
 #bot token for connection to the chat
-bot.run(secretKey[0])
+asyncio.run(main())

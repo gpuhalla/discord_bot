@@ -317,6 +317,6 @@ class DatabaseProxy(commands.Cog, name='DatabaseProxy'):
                         await addPoints(member.id, 1)
             await asyncio.sleep(60)
         
-def setup(bot):
-    bot.add_cog(DatabaseProxy(bot))
+async def setup(bot):
+    await bot.add_cog(DatabaseProxy(bot))
         

@@ -35,5 +35,5 @@ class BotSpeak(commands.Cog, name='BotSpeak'):
                 comment = "Sorry, I'm having a hard time simulating that user."
             await ctx.send(comment)
             
-def setup(bot):
-    bot.add_cog(BotSpeak(bot))
+async def setup(bot):
+    await bot.add_cog(BotSpeak(bot))
